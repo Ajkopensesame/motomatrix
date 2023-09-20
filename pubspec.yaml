@@ -1,0 +1,41 @@
+name: motomatrix
+description: A new Flutter project.
+
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.1 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_core: ^2.15.1
+  firebase_auth: ^4.9.0
+  cloud_firestore: ^4.9.1
+  firebase_database: ^10.2.5
+  flutter_riverpod: ^2.4.0
+  flutter_stripe: ^9.4.0
+  cupertino_icons: ^1.0.6
+  http: ^1.1.0
+  html: ^0.15.4
+  tflite_flutter: ^0.10.1
+  draggable_home: ^1.0.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.3
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/splash.png
+    - assets/images/obd2.png
+    - assets/images/user_profile.png
+    - assets/images/vin_decoder.png
+    - assets/images/dtc_info.png
+    - assets/images/common_fix.png
+    - assets/images/oem_request.png
+    - assets/images/settings.png
+    - assets/lite-model_qat_mobilebert_xs_qat_lite_1.tflite
