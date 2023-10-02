@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:your_app/models/dtc.dart';
-import 'package:your_app/models/vehicle.dart';
 
 class GenesisHistory {
   final String question;
   final String response;
   final DateTime timestamp;
+  final bool isUser;
 
   GenesisHistory({
     required this.question,
     required this.response,
     required this.timestamp,
+    required this.isUser,
   });
 
   // Converts the object to a Map for Firestore
@@ -19,6 +19,7 @@ class GenesisHistory {
       'question': question,
       'response': response,
       'timestamp': timestamp,
+      'isUser': isUser,
     };
   }
 
@@ -28,6 +29,7 @@ class GenesisHistory {
       question: map['question'],
       response: map['response'],
       timestamp: map['timestamp'].toDate(),
+      isUser: map['isUser'] ?? false,
     );
   }
 }
@@ -49,7 +51,10 @@ class GenesisHistoryService {
         .limit(n)
         .get();
 
-    return snapshot.docs.map((doc) => GenesisHistory.fromMap(doc.data())).toList();
+    return snapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      return GenesisHistory.fromMap(data);
+    }).toList();
   }
 
   // Retrieve responses based on a question from history
@@ -59,7 +64,10 @@ class GenesisHistoryService {
         .where('question', isEqualTo: question)
         .get();
 
-    return snapshot.docs.map((doc) => GenesisHistory.fromMap(doc.data())).toList();
+    return snapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      return GenesisHistory.fromMap(data);
+    }).toList();
   }
 
   // Delete an entry from the history (based on ID)

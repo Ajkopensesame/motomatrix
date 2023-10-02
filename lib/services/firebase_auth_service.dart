@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import '../models/app_user.dart';
+import '../models/app_user.dart';  // Make sure you import your AppUser model here
 
 class FirebaseAuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -9,15 +9,20 @@ class FirebaseAuthService {
     if (firebaseUser != null) {
       return AppUser(
         id: firebaseUser.uid,
-        name: firebaseUser.displayName ?? '', // Assuming 'name' maps to Firebase's 'displayName'
-        email: firebaseUser.email ?? '',      // Using Firebase's email
-        // ... any other fields you have in AppUser
+        name: firebaseUser.displayName ?? '',  // Assuming 'name' maps to Firebase's 'displayName'
+        email: firebaseUser.email ?? '',       // Using Firebase's email
+        // Add any other fields you have in AppUser
       );
     }
     return null;
   }
 
-  // Sign in with email and password
+  // Stream to get user changes
+  Stream<AppUser?> userChanges() {
+    return _firebaseAuth.authStateChanges().map(_userFromFirebase);
+  }
+
+  // Method to sign in with email and password
   Future<AppUser?> signInWithEmailAndPassword(String email, String password) async {
     try {
       final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
@@ -31,7 +36,7 @@ class FirebaseAuthService {
     }
   }
 
-  // Sign up with email and password
+  // Method to sign up with email and password
   Future<AppUser?> signUpWithEmailAndPassword(String email, String password, String name) async {
     try {
       final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
@@ -49,12 +54,12 @@ class FirebaseAuthService {
     }
   }
 
-  // Sign out
+  // Method to sign out
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
   }
 
-  // Get the current user
+  // Method to get the current user
   AppUser? getCurrentUser() {
     return _userFromFirebase(_firebaseAuth.currentUser);
   }

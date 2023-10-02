@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:motomatrix/providers/firebase_auth_service_provider.dart';
 import 'package:motomatrix/screens/common_fix.dart';
 import 'package:motomatrix/screens/connected_vehicle_screen.dart';
 import 'package:motomatrix/screens/dtc_info_screen.dart';
+import 'package:motomatrix/screens/my_garage_screen.dart';
 import 'package:motomatrix/screens/obd2_screen.dart';
 import 'package:motomatrix/screens/oem_request_screen.dart';
 import 'package:motomatrix/screens/settings_screen.dart';
@@ -13,23 +15,42 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:motomatrix/screens/user_profile_screen.dart';
 import 'package:motomatrix/screens/vin_decoder_screen.dart';
 import 'package:motomatrix/themes/app_theme.dart';
+import 'genesis/screens/genesis_main_screen.dart';
 import 'models/app_user.dart';
+import 'models/vin_data.dart';
 import 'services/firebase_auth_service.dart';
-import 'genesis/services/machine_learning_service.dart';
 import 'screens/login_screen.dart';
+
+class StringUtil {
+  static String toTitleCase(String text) {
+    if (text.isEmpty) {
+      return text;
+    }
+    return text.toLowerCase().split(' ').map((word) {
+      final String firstLetter = word.isNotEmpty ? word[0].toUpperCase() : '';
+      final String remaining = word.length > 1 ? word.substring(1) : '';
+      return '$firstLetter$remaining';
+    }).join(' ');
+  }
+}
+
+class VinDataNotifier extends StateNotifier<VinData?> {
+  VinDataNotifier() : super(null);
+
+  void setVinData(VinData vinData) {
+    state = vinData;
+  }
+}
+
+final vinDataProvider = StateNotifierProvider<VinDataNotifier, VinData?>((ref) => VinDataNotifier());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  final MachineLearningService mlService = MachineLearningService('assets/lite-model_qat_mobilebert_xs_qat_lite_1.tflite');
-
   runApp(
     ProviderScope(
       child: MotoMatrixApp(),
-      // This is where you can provide the mlService to the rest of your app if needed
-       overrides: [
-         machineLearningServiceProvider.overrideWithValue(mlService),
-       ],
+      overrides: [],
     ),
   );
 }
@@ -40,22 +61,22 @@ class MotoMatrixApp extends ConsumerWidget {
     return MaterialApp(
       title: 'MotoMatrix',
       theme: AppTheme.lightTheme,
-      initialRoute: '/',
+      home: SplashScreen(),
       routes: {
-        '/': (context) => SplashScreen(),
+        '/main': (context) => MainScreen(),
         '/login': (context) => LoginScreen(),
         '/dashboard': (context) => DashboardScreen(),
-        '/common_fix': (context) => CommonFixScreen(), // Replace with your CommonFixScreen widget
+        '/common_fix': (context) => CommonFixScreen(),
         '/dtc_info': (context) => DTCInfoScreen(),
         '/obd2': (context) => OBD2Screen(),
         '/oem_request': (context) => OEMRequestScreen(),
-       // '/region_selection': (context) => RegionSelectionScreen(),
         '/settings': (context) => SettingsScreen(),
         '/signup': (context) => SignUpScreen(),
         '/user_profile': (context) => UserProfileScreen(),
         '/vin_decoder': (context) => VINDecoderScreen(),
         '/connected_vehicle_screen': (context) => ConnectedVehicleScreen(),
-        // Add other routes as needed
+        '/genesis_main_screen' : (context) => GenesisMainScreen(),
+        '/my_garage_screen' : (context) => MyGarageScreen()
       },
       onGenerateRoute: _getRoute,
     );
@@ -63,6 +84,26 @@ class MotoMatrixApp extends ConsumerWidget {
 
   Route<dynamic>? _getRoute(RouteSettings settings) {
     return null;
+  }
+}
+
+class MainScreen extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return StreamBuilder<AppUser?>(
+      stream: ref.read(firebaseAuthServiceProvider).userChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          final user = snapshot.data;
+          if (user != null) {
+            return DashboardScreen();
+          } else {
+            return LoginScreen();
+          }
+        }
+        return CircularProgressIndicator();
+      },
+    );
   }
 }
 
@@ -74,7 +115,3 @@ final currentUserProvider = FutureProvider<AppUser?>((ref) async {
 final firebaseAuthProvider = Provider<FirebaseAuthService>((ref) {
   return FirebaseAuthService();
 });
-
-// Uncomment if you want to make mlService available to the rest of your app
-final machineLearningServiceProvider = Provider<MachineLearningService>((ref) => throw UnimplementedError());
-

@@ -28,7 +28,7 @@ class GenesisUtilities {
 
   /// Truncates a given string to a specified length with an ellipsis.
   static String truncateString(String str, int length) {
-    if (str == null || str.length <= length) {
+    if (str.length <= length) {
       return str;
     }
     return str.substring(0, length) + '...';

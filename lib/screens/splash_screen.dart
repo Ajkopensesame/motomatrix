@@ -9,7 +9,7 @@ class SplashScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Use a Timer instead of FutureBuilder since we always want to navigate to the login page
     Timer(Duration(seconds: 2), () {
-      Navigator.pushReplacementNamed(context, '/login');
+      Navigator.pushReplacementNamed(context, '/main');
     });
 
     return Scaffold(

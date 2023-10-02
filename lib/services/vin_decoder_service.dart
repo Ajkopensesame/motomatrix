@@ -10,7 +10,7 @@ class VINDecoderService {
     if (response.statusCode == 200) {
       final Map<String, dynamic> decodedData = json.decode(response.body);
       if (decodedData['Results'] != null && decodedData['Results'].isNotEmpty) {
-        return _transformResults(decodedData['Results']);
+        return _transformResults(vin, decodedData['Results']);
       } else {
         throw Exception('Failed to decode VIN');
       }
@@ -19,8 +19,8 @@ class VINDecoderService {
     }
   }
 
-  Map<String, dynamic> _transformResults(List<dynamic> results) {
-    Map<String, dynamic> transformedResults = {};
+  Map<String, dynamic> _transformResults(String vin, List<dynamic> results) {
+    Map<String, dynamic> transformedResults = {'vin': vin};
 
     for (var result in results) {
       String variable = result['Variable'];
@@ -56,9 +56,6 @@ class VINDecoderService {
           break;
         case 'Fuel Type - Primary':
           transformedResults['fuelType'] = value ?? 'N/A';
-          break;
-        case 'Vehicle Descriptor':
-          transformedResults['vin'] = value ?? 'N/A';
           break;
         case 'Plant City':
           transformedResults['plantCity'] = value ?? 'N/A';
@@ -96,22 +93,12 @@ class VINDecoderService {
         case 'Tire Pressure Monitoring System (TPMS) Type':
           transformedResults['tpmsType'] = value ?? 'N/A';
           break;
-        case 'Plant Country':
-          transformedResults['plantCountry'] = value ?? 'N/A';
-          break;
         case 'Trim Level':
           transformedResults['trimLevel'] = value ?? 'N/A';
           break;
         case 'Transmission Type':
           transformedResults['transmissionType'] = value ?? 'N/A';
           break;
-        case 'Drive Type':
-          transformedResults['driveType'] = value ?? 'N/A';
-          break;
-        case 'Number of Airbags (Front, Side, and Knee)':
-          transformedResults['numberOfAirbags'] = value ?? 'N/A';
-          break;
-
       }
     }
 
