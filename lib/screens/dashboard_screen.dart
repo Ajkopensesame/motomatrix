@@ -31,6 +31,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: ListView(
           controller: _scrollController,
           children: [
+            CustomScreenCard(
+              title: 'Genesis',
+              description: 'How Can I Help?',
+              imagePath: 'assets/images/genesis.png',
+              onTap: () => Navigator .pushNamed(context, '/genesis_main_screen'),
+            ),
+            CustomScreenCard(
+                title: 'My Garage',
+                description: 'List Of Vehicles In My Garage',
+                imagePath: 'assets/images/mygarage.png',
+                onTap: () => Navigator .pushNamed(context, '/my_garage_screen'),
+            ),
 
 
             CustomScreenCard(

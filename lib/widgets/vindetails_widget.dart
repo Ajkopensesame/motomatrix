@@ -20,6 +20,7 @@ class VINDetailsWidget extends StatelessWidget {
 
     // Using a map to easily iterate and build the list
     Map<String, String?> detailsMap = {
+      'VIN': vinData.id,
       'Make': vinData.make,
       'Model': vinData.model,
       'Year': vinData.year,

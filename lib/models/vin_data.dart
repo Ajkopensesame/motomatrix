@@ -64,6 +64,7 @@ class VinData {
   // Convert the object to a map
   Map<String, dynamic> toMap() {
     return {
+      'vin': id,
       'make': make,
       'model': model,
       'year': year,
@@ -90,7 +91,7 @@ class VinData {
 
   // Create an object from a map
   VinData.fromMap(Map<String, dynamic> map)
-      : id = map['id'],
+      : id = map['vin'],
         make = StringUtil.toTitleCase(map['make']?? ''),
         model = StringUtil.toTitleCase(map['model']?? ''),
         year = StringUtil.toTitleCase(map['year']?? ''),
