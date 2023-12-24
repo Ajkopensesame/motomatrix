@@ -15,7 +15,8 @@ class FirestoreService {
   CollectionReference get _problemsAndFixes => _firestore.collection('problems_and_fixes');
 
   Future<void> saveVinData(VinData vinData) async {
-    await _userVehicles.add(vinData.toMap());
+    DocumentReference docRef = await _userVehicles.add(vinData.toMap());
+    vinData.documentId = docRef.id;
   }
 
   Future<void> deleteVinData(String vinId) async {
@@ -24,7 +25,11 @@ class FirestoreService {
 
   Future<List<VinData>> getSavedVINs() async {
     QuerySnapshot snapshot = await _userVehicles.get();
-    return snapshot.docs.map((doc) => VinData.fromMap(doc.data() as Map<String, dynamic>)).toList();
+    return snapshot.docs.map((doc) {
+      var vinData = VinData.fromMap(doc.data() as Map<String, dynamic>);
+      vinData.documentId = doc.id;  // Populate documentId here
+      return vinData;
+    }).toList();
   }
 
   Future<List<Map<String, dynamic>>> getPotentialFixes(String problemDescription) async {

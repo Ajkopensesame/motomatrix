@@ -60,8 +60,9 @@ class _VINDecoderScreenState extends State<VINDecoderScreen> {
   }
 
   Future<void> _deleteVinData(VinData vinData) async {
+    if (vinData.documentId != null)
     try {
-      await _firestoreService.deleteVinData(vinData as String);
+      await _firestoreService.deleteVinData(vinData.documentId!);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('VIN deleted successfully!')),
       );

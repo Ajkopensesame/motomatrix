@@ -10,6 +10,7 @@ import '../providers/chat_notifier.dart';
 import '../services/chatgpt_service.dart';
 import '../utils/handle_send_message.dart';
 import '../utils/save_to_firebase_utils.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 
 class ChatScreen extends ConsumerWidget {
   final Function fetchPreviousConversation;
@@ -22,16 +23,19 @@ class ChatScreen extends ConsumerWidget {
     final messages = ref.watch(chatProvider);
     return _ChatScreenBuilder(ref: ref, messages: messages).build(context);
   }
+
 }
 
 class _ChatScreenBuilder {
   final WidgetRef ref;
   final List<chatTypes.TextMessage> messages;
+  final AutoScrollController autoScrollController = AutoScrollController();
   final chatTypes.User user = const chatTypes.User(id: 'user_id');
   final chatTypes.User aiAssistant = const chatTypes.User(id: 'genesis_id');
   String hintText = "How Can I Help";
 
   _ChatScreenBuilder({required this.ref, required this.messages});
+
 
   void startNewConversation() {
     ref.read(chatProvider.notifier).clearMessages();
@@ -45,8 +49,11 @@ class _ChatScreenBuilder {
       aiAssistant,
       ref,
       messages,
+        autoScrollController
     );
   }
+
+
 
   Widget build(BuildContext context) {
     List<chatTypes.TextMessage> reversedMessages = messages.reversed.toList();
@@ -84,9 +91,11 @@ class _ChatScreenBuilder {
                       aiAssistant,
                       ref,
                       messages,
+                        autoScrollController
                     );
                   },
                   user: user,
+                  scrollController: autoScrollController,
                   theme: DefaultChatTheme(
                     backgroundColor: Colors.transparent,
                   ),

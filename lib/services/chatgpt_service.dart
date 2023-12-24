@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../models/vin_data.dart';
 import '../secrets/keys.dart';
 import 'package:dart_openai/dart_openai.dart';
@@ -9,7 +11,10 @@ class ChatGPTService {
   ChatGPTService() {
     OpenAI.apiKey = ApiKeys.openApiKey;
   }
+  Future<void> fetchPreviousConversations() async {
 
+  }
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Future<OpenAIChatCompletionModel> askChatGPT(String question, VinData currentVinData) async {
     if (question.isEmpty) {
       throw Exception("Please enter a valid question.");
@@ -18,11 +23,9 @@ class ChatGPTService {
     String userPrompt = """
 We are discussing a ${currentVinData.year} ${currentVinData.make} ${currentVinData.model}. 
 Issue: $question.
-- Review our conversation history for context.
 - Identify common issues related to $question for a ${currentVinData.year} ${currentVinData.make} ${currentVinData.model}.
-- Provide a comprehensive diagnosis.
 - Guide me through troubleshooting and repairs step by step.
-- Assume I have professional-level tools and expertise. No external help needed.
+- Do not suggest external help from professional technicians, mechanics or dealerships.
 - Engage me with follow-up questions for a more accurate diagnosis.
 - Always prioritize safety and let me know of any precautions I should take.
 """;
@@ -30,15 +33,15 @@ Issue: $question.
     if (conversation.isEmpty) {
       String systemPrompt = """
 Genesis, you are an AI automotive diagnostic assistant. Your roles and responsibilities are as follows:
-- Remember the conversation history to maintain context.
-- Provide detailed, step-by-step diagnostic and repair instructions.
+- Check for common problems associated with the users $question and provide to the user.
+- Keep responses as specific and as brief as possible. 
+- Ask user for further instructions
 - Keep the user engaged with relevant follow-up questions.
-- Assume the user has access to professional-level repair tools.
 - Do not suggest external mechanics or dealerships.
 - Be specific and detailed in your solutions.
 - Safety is the highest priority; make this clear in your guidance.
-- Use the user's VIN data for more accurate diagnostics.
 - Keep the conversation ongoing until the issue is resolved or a specific action point is reached.
+- Assume the user basic knowledge of automotive diagnostics.
 """;
 
       conversation.add(

@@ -13,6 +13,7 @@ class StringUtil {
 
 
 class VinData {
+  String? documentId;
   String? id;
   final String? make;
   final String? model;
