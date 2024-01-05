@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 // Import your custom widgets if needed
 import '../widgets/custom_app_bar.dart';
@@ -5,6 +7,8 @@ import '../widgets/custom_elevatedbutton.dart';
 import '../widgets/custom_textfield.dart';
 
 class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
@@ -17,7 +21,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Settings'),
+      appBar: const CustomAppBar(title: 'Settings'),
       body: Stack(
         children: [
           _buildBackgroundImage(), // Background image
@@ -26,7 +30,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: ListView(
               children: [
                 SwitchListTile(
-                  title: Text('Dark Theme'),
+                  title: const Text('Dark Theme'),
                   value: _darkTheme,
                   onChanged: (value) {
                     setState(() {
@@ -36,7 +40,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                 ),
                 SwitchListTile(
-                  title: Text('Enable Notifications'),
+                  title: const Text('Enable Notifications'),
                   value: _notificationsEnabled,
                   onChanged: (value) {
                     setState(() {
@@ -45,15 +49,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     // Handle notification settings here
                   },
                 ),
-                SizedBox(height: 20),
-                Text('Change Password', style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
+                const SizedBox(height: 20),
+                const Text('Change Password',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
                 CustomTextField(
                   controller: _passwordController,
                   hintText: 'New Password',
                   obscureText: true,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 CustomElevatedButton(
                   onPressed: _changePassword,
                   label: 'Update Password',
@@ -77,13 +82,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _changePassword() {
     // In a real-world scenario, update the user's password in the database or authentication system
-    final newPassword = _passwordController.text;
 
     // Handle the password change logic here
 
     // Provide feedback to the user
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Password updated successfully!')),
+      const SnackBar(content: Text('Password updated successfully!')),
     );
   }
 }

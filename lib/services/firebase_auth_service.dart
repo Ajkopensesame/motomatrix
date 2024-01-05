@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import '../models/app_user.dart';  // Make sure you import your AppUser model here
+import '../models/app_user.dart'; // Make sure you import your AppUser model here
 
 class FirebaseAuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -9,8 +9,9 @@ class FirebaseAuthService {
     if (firebaseUser != null) {
       return AppUser(
         id: firebaseUser.uid,
-        name: firebaseUser.displayName ?? '',  // Assuming 'name' maps to Firebase's 'displayName'
-        email: firebaseUser.email ?? '',       // Using Firebase's email
+        name: firebaseUser.displayName ??
+            '', // Assuming 'name' maps to Firebase's 'displayName'
+        email: firebaseUser.email ?? '', // Using Firebase's email
         // Add any other fields you have in AppUser
       );
     }
@@ -23,7 +24,8 @@ class FirebaseAuthService {
   }
 
   // Method to sign in with email and password
-  Future<AppUser?> signInWithEmailAndPassword(String email, String password) async {
+  Future<AppUser?> signInWithEmailAndPassword(
+      String email, String password) async {
     try {
       final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
@@ -31,13 +33,13 @@ class FirebaseAuthService {
       );
       return _userFromFirebase(userCredential.user);
     } catch (e) {
-      print(e.toString());
       return null;
     }
   }
 
   // Method to sign up with email and password
-  Future<AppUser?> signUpWithEmailAndPassword(String email, String password, String name) async {
+  Future<AppUser?> signUpWithEmailAndPassword(
+      String email, String password, String name) async {
     try {
       final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
@@ -49,7 +51,6 @@ class FirebaseAuthService {
 
       return _userFromFirebase(userCredential.user);
     } catch (e) {
-      print(e.toString());
       return null;
     }
   }

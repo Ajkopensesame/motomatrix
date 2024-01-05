@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../models/vin_data.dart';
+import 'package:motomatrix/models/vin_data.dart';
+// import '../providers/vehicle_provider.dart'; // Remove if not used
 import '../secrets/keys.dart';
 import 'package:dart_openai/dart_openai.dart';
-import '../models/custom_openai_chat_message_model.dart';  // Make sure to create this model
+import '../models/custom_openai_chat_message_model.dart';
 
 class ChatGPTService {
   List<CustomOpenAIChatMessageModel> conversation = [];
@@ -11,19 +10,19 @@ class ChatGPTService {
   ChatGPTService() {
     OpenAI.apiKey = ApiKeys.openApiKey;
   }
-  Future<void> fetchPreviousConversations() async {
 
-  }
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  Future<OpenAIChatCompletionModel> askChatGPT(String question, VinData currentVinData) async {
+  Future<void> fetchPreviousConversations() async {}
+
+  Future<OpenAIChatCompletionModel> askChatGPT(
+      String question, VinData selectedVehicle) async {
     if (question.isEmpty) {
       throw Exception("Please enter a valid question.");
     }
 
     String userPrompt = """
-We are discussing a ${currentVinData.year} ${currentVinData.make} ${currentVinData.model}. 
+We are discussing a ${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}. 
 Issue: $question.
-- Identify common issues related to $question for a ${currentVinData.year} ${currentVinData.make} ${currentVinData.model}.
+- Identify common issues related to $question for a ${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}.
 - Guide me through troubleshooting and repairs step by step.
 - Do not suggest external help from professional technicians, mechanics or dealerships.
 - Engage me with follow-up questions for a more accurate diagnosis.
@@ -61,26 +60,47 @@ Genesis, you are an AI automotive diagnostic assistant. Your roles and responsib
       ),
     );
 
-    OpenAIChatCompletionModel chatCompletion = await OpenAI.instance.chat.create(
+    // Convert conversation to OpenAIChatCompletionChoiceMessageModel
+    var messages = conversation.map((customMessage) {
+      var contentItem = OpenAIChatCompletionChoiceMessageContentItemModel.text(
+          customMessage.content);
+      return OpenAIChatCompletionChoiceMessageModel(
+        role: customMessage.role == 'system'
+            ? OpenAIChatMessageRole.system
+            : OpenAIChatMessageRole.user,
+        content: [contentItem],
+      );
+    }).toList();
+
+    OpenAIChatCompletionModel chatCompletion =
+        await OpenAI.instance.chat.create(
       model: "gpt-3.5-turbo",
-      messages: conversation.map((customMessage) => OpenAIChatCompletionChoiceMessageModel(
-        role: customMessage.role == 'system' ? OpenAIChatMessageRole.system : OpenAIChatMessageRole.user,
-        content: customMessage.content,
-      )).toList(),
+      messages: messages,
     );
 
     if (chatCompletion.choices.isEmpty) {
       throw Exception('Failed to fetch answer from ChatGPT');
     }
 
-    conversation.add(
-      CustomOpenAIChatMessageModel(
-        role: 'assistant',
-        content: chatCompletion.choices[0].message.content.trim(),
-        timestamp: DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    // Correctly handle the received choices
+    for (var choice in chatCompletion.choices) {
+      if (choice.message.content is List<OpenAIChatCompletionChoiceMessageContentItemModel> && choice.message.content!.isNotEmpty) {
+        // Assuming the first item in the list contains the desired text
+        var firstItem = choice.message.content?.first;
+        // Assuming that firstItem has a text property which is a String
+        String? content = firstItem?.text;
+        conversation.add(
+          CustomOpenAIChatMessageModel(
+            role: 'assistant',
+            content: content!.trim(),
+            timestamp: DateTime.now().millisecondsSinceEpoch,
+          ),
+        );
+      }
+    }
 
     return chatCompletion;
   }
+
+  sendRequest(Map<String, Object> map) {}
 }

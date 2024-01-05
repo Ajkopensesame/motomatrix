@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CustomBackground extends StatelessWidget {
   final Widget child;
 
-  CustomBackground({required this.child});
+  const CustomBackground({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,7 @@ class CustomBackground extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/splash.png'),
+              image: const AssetImage('assets/images/splash.png'),
               fit: BoxFit.cover,
               colorFilter: ColorFilter.mode(
                 Colors.white.withOpacity(0.7),

@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:motomatrix/widgets/custom_background.dart';
 import '../models/vin_data.dart';
 
 class VINDetailsWidget extends StatelessWidget {
   final VinData vinData;
 
-  VINDetailsWidget({required this.vinData});
+  const VINDetailsWidget({super.key, required this.vinData});
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: _buildDetailsList(),
+    return CustomBackground( // Optional: Use CustomBackground for a consistent look
+      child: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(16), // Added padding for better spacing
+          child: Column(
+            children: _buildDetailsList(),
+          ),
+        ),
       ),
     );
   }

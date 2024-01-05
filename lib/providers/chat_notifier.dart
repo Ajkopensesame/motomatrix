@@ -1,3 +1,4 @@
+// ignore: library_prefixes
 import 'package:flutter_chat_types/flutter_chat_types.dart' as chatTypes;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,6 +9,7 @@ class ChatNotifier extends StateNotifier<List<chatTypes.TextMessage>> {
   void addMessage(chatTypes.TextMessage message) {
     state = [...state, message];
   }
+
   void clearMessages() {
     state = [];
   }
@@ -22,6 +24,7 @@ class ChatNotifier extends StateNotifier<List<chatTypes.TextMessage>> {
   }
 }
 
-final chatProvider = StateNotifierProvider<ChatNotifier, List<chatTypes.TextMessage>>(
-      (ref) => ChatNotifier(),
+final chatProvider =
+    StateNotifierProvider<ChatNotifier, List<chatTypes.TextMessage>>(
+  (ref) => ChatNotifier(),
 );

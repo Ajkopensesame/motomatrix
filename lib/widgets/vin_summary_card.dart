@@ -5,7 +5,7 @@ import '../screens/vin_details_screen.dart'; // Ensure you have this screen as s
 class VinSummaryCard extends StatelessWidget {
   final VinData vinData;
 
-  VinSummaryCard({required this.vinData});
+  const VinSummaryCard({super.key, required this.vinData});
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +27,13 @@ class VinSummaryCard extends StatelessWidget {
         ),
         child: ListTile(
           title: Text(
-            '${makeTitleCase} ${vinData.model} ${vinData.year}',
-            style: TextStyle(
+            '$makeTitleCase ${vinData.model} ${vinData.year}',
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
           ),
-          trailing: Icon(Icons.arrow_forward_ios),
+          trailing: const Icon(Icons.arrow_forward_ios),
         ),
       ),
     );

@@ -1,29 +1,25 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' as fbAuth;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+// ignore: library_prefixes
 import 'package:flutter_chat_types/flutter_chat_types.dart' as chatTypes;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../main.dart';
+import 'package:motomatrix/models/vin_data.dart';
+import 'package:motomatrix/widgets/custom_app_bar.dart';
+import 'package:motomatrix/widgets/custom_vehicle_app_bar.dart';
 import '../providers/chat_notifier.dart';
-import '../services/chatgpt_service.dart';
 import '../utils/handle_send_message.dart';
-import '../utils/save_to_firebase_utils.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
 class ChatScreen extends ConsumerWidget {
-  final Function fetchPreviousConversation;
-
-  ChatScreen({required this.fetchPreviousConversation});
+  const ChatScreen({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    fetchPreviousConversation();
     final messages = ref.watch(chatProvider);
     return _ChatScreenBuilder(ref: ref, messages: messages).build(context);
   }
-
 }
 
 class _ChatScreenBuilder {
@@ -36,34 +32,24 @@ class _ChatScreenBuilder {
 
   _ChatScreenBuilder({required this.ref, required this.messages});
 
-
   void startNewConversation() {
     ref.read(chatProvider.notifier).clearMessages();
   }
 
   void _handlePreFilledButton(String question) {
-    handleSendMessage(
-      chatTypes.PartialText(text: question),
-      hintText,
-      user,
-      aiAssistant,
-      ref,
-      messages,
-        autoScrollController
-    );
+    handleSendMessage(chatTypes.PartialText(text: question), hintText, user,
+        aiAssistant, ref, messages, autoScrollController);
   }
-
-
 
   Widget build(BuildContext context) {
     List<chatTypes.TextMessage> reversedMessages = messages.reversed.toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Genesis Chat'),
+      appBar: CustomAppBar(
+        title: ('Genesis Chat'),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
             onPressed: () => startNewConversation(),
           ),
         ],
@@ -71,7 +57,7 @@ class _ChatScreenBuilder {
       body: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/images/genesis.png'),
                 fit: BoxFit.cover,
@@ -80,27 +66,6 @@ class _ChatScreenBuilder {
           ),
           Column(
             children: [
-              Expanded(
-                child: Chat(
-                  messages: reversedMessages,
-                  onSendPressed: (chatTypes.PartialText message) {
-                    handleSendMessage(
-                      message,
-                      hintText,
-                      user,
-                      aiAssistant,
-                      ref,
-                      messages,
-                        autoScrollController
-                    );
-                  },
-                  user: user,
-                  scrollController: autoScrollController,
-                  theme: DefaultChatTheme(
-                    backgroundColor: Colors.transparent,
-                  ),
-                ),
-              ),
               if (messages.isEmpty)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -108,23 +73,55 @@ class _ChatScreenBuilder {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ElevatedButton(
-                        onPressed: () => _handlePreFilledButton('Help Me Diagnose A DTC'),
-                        child: Text('Help Me Diagnose A DTC'),
+                        onPressed: () =>
+                            _handlePreFilledButton('Help Me Diagnose A DTC'),
+                        child: const Text(
+                          'Help Me Diagnose A DTC',
+                          style:
+                              TextStyle(color: Colors.black), // Add this line
+                        ),
                       ),
                       ElevatedButton(
-                        onPressed: () => _handlePreFilledButton('Help Me Diagnose a Noise'),
-                        child: Text('Help Me Diagnose a Noise'),
+                        onPressed: () =>
+                            _handlePreFilledButton('Help Me Diagnose a Noise'),
+                        child: const Text(
+                          'Help Me Diagnose a Noise',
+                          style:
+                              TextStyle(color: Colors.black), // Add this line
+                        ),
                       ),
                       ElevatedButton(
-                        onPressed: () => _handlePreFilledButton('Tell Me About Common Issues'),
-                        child: Text('Tell Me About Common Issues'),
+                        onPressed: () => _handlePreFilledButton(
+                            'Tell Me About Common Issues'),
+                        child: const Text(
+                          'Tell Me About Common Issues',
+                          style:
+                              TextStyle(color: Colors.black), // Add this line
+                        ),
                       ),
                     ],
                   ),
                 ),
+              Expanded(
+                child: Chat(
+                  messages: reversedMessages,
+                  onSendPressed: (chatTypes.PartialText message) {
+                    handleSendMessage(message, hintText, user, aiAssistant, ref,
+                        messages, autoScrollController);
+                  },
+                  user: user,
+                  scrollController: autoScrollController,
+                  theme: const DefaultChatTheme(
+                    backgroundColor: Colors.transparent,
+                  ),
+                ),
+              ),
             ],
           ),
         ],
+      ),
+      bottomNavigationBar: CustomVehicleAppBar(
+        onVehicleSelected: (VinData selectedVehicle) {},
       ),
     );
   }

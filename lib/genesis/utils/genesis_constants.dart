@@ -1,4 +1,4 @@
-class GenesisConstants {
+/*class GenesisConstants {
   // Define URLs, API Endpoints, and other static string values here.
   static const String API_ENDPOINT = 'https://api.yourservice.com/';
 
@@ -31,3 +31,4 @@ class GenesisConstants {
 // ... Add more constants as you see fit.
 }
 
+*/

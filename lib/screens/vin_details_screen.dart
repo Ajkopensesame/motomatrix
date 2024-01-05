@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import '../models/vin_data.dart';
-import '../widgets/vindetails_widget.dart';
+import '../widgets/customVINcard.dart';
+import '../widgets/custom_app_bar.dart';
 
 class VINDetailsScreen extends StatelessWidget {
   final VinData vinData;
 
-  VINDetailsScreen({required this.vinData});
+  const VINDetailsScreen({super.key, required this.vinData});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('VIN Details')),
-      body: VINDetailsWidget(vinData: vinData),
+      appBar: const CustomAppBar(title:('VIN Details')),
+      body: CustomVINCard(vinData: vinData),
     );
   }
 }

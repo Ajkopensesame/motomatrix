@@ -8,7 +8,6 @@ class GenesisDatabaseService {
     try {
       await _firestore.collection('genesis_learned_data').add(data);
     } catch (e) {
-      print("Error storing learned data: $e");
       // Handle error accordingly
     }
   }
@@ -27,18 +26,20 @@ class GenesisDatabaseService {
       }
       return null;
     } catch (e) {
-      print("Error retrieving learned data: $e");
       // Handle error accordingly
       return null;
     }
   }
 
   // Update Genesis's learned data based on feedback or new learnings
-  Future<void> updateLearnedData(String documentId, Map<String, dynamic> updatedData) async {
+  Future<void> updateLearnedData(
+      String documentId, Map<String, dynamic> updatedData) async {
     try {
-      await _firestore.collection('genesis_learned_data').doc(documentId).update(updatedData);
+      await _firestore
+          .collection('genesis_learned_data')
+          .doc(documentId)
+          .update(updatedData);
     } catch (e) {
-      print("Error updating learned data: $e");
       // Handle error accordingly
     }
   }
@@ -48,4 +49,3 @@ class GenesisDatabaseService {
 // - Retrieve a batch of learned data for analysis.
 // - Listen to changes in learned data for real-time updates.
 }
-

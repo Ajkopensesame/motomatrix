@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:motomatrix/providers/firebase_auth_service_provider.dart';
+import 'package:motomatrix/providers/vehicle_provider.dart';
+import 'package:motomatrix/screens/chat_screen.dart';
 import 'package:motomatrix/screens/common_fix.dart';
 import 'package:motomatrix/screens/connected_vehicle_screen.dart';
 import 'package:motomatrix/screens/dtc_info_screen.dart';
@@ -15,7 +17,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:motomatrix/screens/user_profile_screen.dart';
 import 'package:motomatrix/screens/vin_decoder_screen.dart';
 import 'package:motomatrix/themes/app_theme.dart';
-import 'genesis/screens/genesis_main_screen.dart';
 import 'models/app_user.dart';
 import 'models/vin_data.dart';
 import 'services/firebase_auth_service.dart';
@@ -42,41 +43,47 @@ class VinDataNotifier extends StateNotifier<VinData?> {
   }
 }
 
-final vinDataProvider = StateNotifierProvider<VinDataNotifier, VinData?>((ref) => VinDataNotifier());
+final vinDataProvider = StateNotifierProvider<VinDataNotifier, VinData?>(
+    (ref) => VinDataNotifier());
+final vehicleProvider = ChangeNotifierProvider((ref) => VehicleProvider());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(
-    ProviderScope(
-      child: MotoMatrixApp(),
+    const ProviderScope(
       overrides: [],
+      child: MotoMatrixApp(),
     ),
   );
 }
 
 class MotoMatrixApp extends ConsumerWidget {
+  const MotoMatrixApp({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'MotoMatrix',
       theme: AppTheme.lightTheme,
-      home: SplashScreen(),
+      home: const SplashScreen(),
       routes: {
-        '/main': (context) => MainScreen(),
+        '/main': (context) => const MainScreen(),
         '/login': (context) => LoginScreen(),
-        '/dashboard': (context) => DashboardScreen(),
-        '/common_fix': (context) => CommonFixScreen(),
-        '/dtc_info': (context) => DTCInfoScreen(),
-        '/obd2': (context) => OBD2Screen(),
-        '/oem_request': (context) => OEMRequestScreen(),
-        '/settings': (context) => SettingsScreen(),
-        '/signup': (context) => SignUpScreen(),
-        '/user_profile': (context) => UserProfileScreen(),
-        '/vin_decoder': (context) => VINDecoderScreen(),
-        '/connected_vehicle_screen': (context) => ConnectedVehicleScreen(),
-        '/genesis_main_screen' : (context) => GenesisMainScreen(),
-        '/my_garage_screen' : (context) => MyGarageScreen()
+        '/dashboard': (context) => const DashboardScreen(),
+        '/common_fix': (context) => const CommonFixScreen(),
+        '/dtc_info': (context) => const DTCInfoScreen(),
+        '/obd2': (context) => const OBD2Screen(),
+        '/oem_request': (context) => const OEMRequestScreen(),
+        '/settings': (context) => const SettingsScreen(),
+        '/signup': (context) => const SignUpScreen(),
+        '/user_profile': (context) => const UserProfileScreen(),
+        '/vin_decoder': (context) => const VINDecoderScreen(),
+        '/connected_vehicle_screen': (context) =>
+            const ConnectedVehicleScreen(),
+        //'/genesis_main_screen': (context) => const GenesisMainScreen(),
+        '/my_garage_screen': (context) => const MyGarageScreen(),
+        '/chat_screen': (context) => const ChatScreen(),
       },
       onGenerateRoute: _getRoute,
     );
@@ -88,6 +95,8 @@ class MotoMatrixApp extends ConsumerWidget {
 }
 
 class MainScreen extends ConsumerWidget {
+  const MainScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return StreamBuilder<AppUser?>(
@@ -96,12 +105,12 @@ class MainScreen extends ConsumerWidget {
         if (snapshot.connectionState == ConnectionState.active) {
           final user = snapshot.data;
           if (user != null) {
-            return DashboardScreen();
+            return const DashboardScreen();
           } else {
             return LoginScreen();
           }
         }
-        return CircularProgressIndicator();
+        return const CircularProgressIndicator();
       },
     );
   }

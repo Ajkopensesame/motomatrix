@@ -15,7 +15,7 @@ class CustomTextField extends StatelessWidget {
   final int? maxLines;
   final String? label;
 
-  CustomTextField({
+  const CustomTextField({super.key, 
     this.controller,
     this.labelText,
     this.validator,
@@ -36,52 +36,52 @@ class CustomTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         labelText: labelText,
-        labelStyle: TextStyle(
+        labelStyle: const TextStyle(
           color: Colors.black,
           fontWeight: FontWeight.bold,
         ),
-        hintStyle: TextStyle(color: Colors.black), // This line sets the hintText color to black
+        hintStyle: const TextStyle(color: Colors.black), // This line sets the hintText color to black
 
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20.0),  // <-- Rounded corners
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: AppColors.darkBlue,
             width: 2.0,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20.0),  // <-- Rounded corners
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: AppColors.darkBlue,
             width: 2.0,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20.0),  // <-- Rounded corners
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: AppColors.mustardYellow,
             width: 3.0,
           ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20.0),  // <-- Rounded corners
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: Colors.red,
             width: 2.0,
           ),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20.0),  // <-- Rounded corners
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: Colors.red,
             width: 3.0,
           ),
         ),
         filled: true,
         fillColor: Colors.white.withOpacity(0.8),
-        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       ),
-      style: TextStyle(
+      style: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w500,
       ),

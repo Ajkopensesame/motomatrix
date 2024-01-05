@@ -5,7 +5,7 @@ class CustomDropdown extends StatelessWidget {
   final String value;
   final ValueChanged<String?> onChanged;
 
-  CustomDropdown({
+  const CustomDropdown({super.key, 
     required this.items,
     required this.value,
     required this.onChanged,
@@ -27,7 +27,7 @@ class CustomDropdown extends StatelessWidget {
         height: 2,
         color: Colors.deepPurpleAccent,
       ),
-      style: TextStyle(color: Colors.deepPurple),
+      style: const TextStyle(color: Colors.deepPurple),
     );
   }
 }

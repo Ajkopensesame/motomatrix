@@ -11,10 +11,11 @@ class StringUtil {
   }
 }
 
-
 class VinData {
+  DateTime? createdAt;
   String? documentId;
   String? id;
+
   final String? make;
   final String? model;
   final String? year;
@@ -65,6 +66,7 @@ class VinData {
   // Convert the object to a map
   Map<String, dynamic> toMap() {
     return {
+      'createdAt': createdAt?.millisecondsSinceEpoch,
       'vin': id,
       'make': make,
       'model': model,
@@ -93,27 +95,29 @@ class VinData {
   // Create an object from a map
   VinData.fromMap(Map<String, dynamic> map)
       : id = map['vin'],
-        make = StringUtil.toTitleCase(map['make']?? ''),
-        model = StringUtil.toTitleCase(map['model']?? ''),
-        year = StringUtil.toTitleCase(map['year']?? ''),
-        plantCity = StringUtil.toTitleCase(map['plantCity']?? ''),
-        trimLevel = StringUtil.toTitleCase(map['trimLevel']?? ''),
-        vehicleType = StringUtil.toTitleCase(map['vehicleType']?? ''),
-        plantCountry = StringUtil.toTitleCase(map['plantCountry']?? ''),
-        bodyClass = StringUtil.toTitleCase(map['bodyClass']?? ''),
-        doors = StringUtil.toTitleCase(map['doors']?? ''),
-        engineDisplacement = StringUtil.toTitleCase(map['engineDisplacement']?? ''),
-        fuelType = StringUtil.toTitleCase(map['fuelType']?? ''),
-        transmissionType = StringUtil.toTitleCase(map['transmissionType']?? ''),
-        driveType = StringUtil.toTitleCase(map['driveType']?? ''),
-        gvwr = StringUtil.toTitleCase(map['gvwr']?? ''),
-        curbWeight = StringUtil.toTitleCase(map['curbWeight']?? ''),
-        wheelbase = StringUtil.toTitleCase(map['wheelbase']?? ''),
-        numberOfSeats = StringUtil.toTitleCase(map['numberOfSeats']?? ''),
-        numberOfAirbags = StringUtil.toTitleCase(map['numberOfAirbags']?? ''),
-        abs = StringUtil.toTitleCase(map['abs']?? ''),
-        esc = StringUtil.toTitleCase(map['esc']?? ''),
-        tpmsType = StringUtil.toTitleCase(map['tpmsType']?? '');
+        make = StringUtil.toTitleCase(map['make'] ?? ''),
+        model = StringUtil.toTitleCase(map['model'] ?? ''),
+        year = StringUtil.toTitleCase(map['year'] ?? ''),
+        plantCity = StringUtil.toTitleCase(map['plantCity'] ?? ''),
+        trimLevel = StringUtil.toTitleCase(map['trimLevel'] ?? ''),
+        vehicleType = StringUtil.toTitleCase(map['vehicleType'] ?? ''),
+        plantCountry = StringUtil.toTitleCase(map['plantCountry'] ?? ''),
+        bodyClass = StringUtil.toTitleCase(map['bodyClass'] ?? ''),
+        doors = StringUtil.toTitleCase(map['doors'] ?? ''),
+        engineDisplacement =
+            StringUtil.toTitleCase(map['engineDisplacement'] ?? ''),
+        fuelType = StringUtil.toTitleCase(map['fuelType'] ?? ''),
+        transmissionType =
+            StringUtil.toTitleCase(map['transmissionType'] ?? ''),
+        driveType = StringUtil.toTitleCase(map['driveType'] ?? ''),
+        gvwr = StringUtil.toTitleCase(map['gvwr'] ?? ''),
+        curbWeight = StringUtil.toTitleCase(map['curbWeight'] ?? ''),
+        wheelbase = StringUtil.toTitleCase(map['wheelbase'] ?? ''),
+        numberOfSeats = StringUtil.toTitleCase(map['numberOfSeats'] ?? ''),
+        numberOfAirbags = StringUtil.toTitleCase(map['numberOfAirbags'] ?? ''),
+        abs = StringUtil.toTitleCase(map['abs'] ?? ''),
+        esc = StringUtil.toTitleCase(map['esc'] ?? ''),
+        tpmsType = StringUtil.toTitleCase(map['tpmsType'] ?? '');
 
   List<Map<String, String>> getDetails() {
     return [
@@ -139,5 +143,11 @@ class VinData {
       {'title': 'ESC', 'value': esc ?? 'N/A'},
       {'title': 'TPMS Type', 'value': tpmsType ?? 'N/A'},
     ];
+  }
+
+  @override
+  String toString() {
+    return 'Make: ${make ?? 'N/A'}, Model: ${model ?? 'N/A'}, Year: ${year ?? 'N/A'}';
+    // Add other relevant fields as needed
   }
 }

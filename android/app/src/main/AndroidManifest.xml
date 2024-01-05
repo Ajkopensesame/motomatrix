@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:label="motomatrix"
+        android:label="Mec Hero"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

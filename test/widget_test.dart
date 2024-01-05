@@ -8,7 +8,7 @@ void main() {
   testWidgets('Test SplashScreen', (WidgetTester tester) async {
     // Wrap the widget with the ProviderScope for testing
     await tester.pumpWidget(
-      ProviderScope(
+      const ProviderScope(
         child: MaterialApp(
           home: SplashScreen(), // Use SplashScreen as the home widget
         ),

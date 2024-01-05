@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:motomatrix/models/vin_data.dart';
+import 'package:motomatrix/widgets/custom_vehicle_app_bar.dart';
 
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_dropdown.dart';
 import '../widgets/custom_elevatedbutton.dart';
 import '../widgets/custom_textfield.dart';
 
-class OEMRequestScreen extends StatefulWidget {
+class OEMRequestScreen extends ConsumerStatefulWidget {
+  const OEMRequestScreen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _OEMRequestScreenState createState() => _OEMRequestScreenState();
 }
 
-class _OEMRequestScreenState extends State<OEMRequestScreen> {
+class _OEMRequestScreenState extends ConsumerState<OEMRequestScreen> {
   String _selectedInfoType = 'Select Information Type';
   final TextEditingController _detailsController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'OEM Information Request'),
+      appBar: const CustomAppBar(title: 'OEM Information Request'),
       body: Stack(
         children: [
           _buildBackgroundImage(), // Background image
@@ -26,7 +32,7 @@ class _OEMRequestScreenState extends State<OEMRequestScreen> {
             child: Column(
               children: [
                 CustomDropdown(
-                  items: [
+                  items: const [
                     'Select Information Type',
                     'Repair Procedures',
                     'Specifications',
@@ -40,13 +46,13 @@ class _OEMRequestScreenState extends State<OEMRequestScreen> {
                     });
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 CustomTextField(
                   controller: _detailsController,
                   hintText: 'Additional Details or Comments',
                   maxLines: 5,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 CustomElevatedButton(
                   onPressed: _submitRequest,
                   label: 'Submit Request',
@@ -55,6 +61,9 @@ class _OEMRequestScreenState extends State<OEMRequestScreen> {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: CustomVehicleAppBar(
+        onVehicleSelected: (VinData selectedVehicle) {},
       ),
     );
   }
@@ -70,14 +79,12 @@ class _OEMRequestScreenState extends State<OEMRequestScreen> {
 
   void _submitRequest() {
     // In a real-world scenario, send the request to the OEM or save it in a database
-    final requestInfo = _selectedInfoType;
-    final requestDetails = _detailsController.text;
 
     // Handle the request submission logic here
 
     // Provide feedback to the user
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Request submitted successfully!')),
+      const SnackBar(content: Text('Request submitted successfully!')),
     );
   }
 }

@@ -6,7 +6,7 @@ class CustomScreenCard extends StatelessWidget {
   final String imagePath;
   final VoidCallback? onTap;
 
-  CustomScreenCard({
+  const CustomScreenCard({super.key, 
     required this.title,
     required this.description,
     this.imagePath = '',
@@ -19,7 +19,7 @@ class CustomScreenCard extends StatelessWidget {
       onTap: onTap,  // <-- Use the onTap callback here
       child: Card(
         elevation: 3,
-        margin: EdgeInsets.all(10),
+        margin: const EdgeInsets.all(10),
         color: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
@@ -31,7 +31,7 @@ class CustomScreenCard extends StatelessWidget {
             children: [
               if (imagePath.isNotEmpty)
                 ClipRRect(
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(15),
                     topRight: Radius.circular(15),
                   ),
@@ -43,20 +43,20 @@ class CustomScreenCard extends StatelessWidget {
                   ),
                 ),
               Padding(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
                 child: Text(
                   description,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                   ),
                 ),

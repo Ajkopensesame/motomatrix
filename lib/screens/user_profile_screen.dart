@@ -5,13 +5,17 @@ import '../widgets/custom_elevatedbutton.dart';
 import '../widgets/custom_textfield.dart';
 
 class UserProfileScreen extends StatefulWidget {
+  const UserProfileScreen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _UserProfileScreenState createState() => _UserProfileScreenState();
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
-  String _userName = 'John Doe'; // Sample data for demonstration
-  String _userEmail = 'john.doe@example.com'; // Sample data for demonstration
+  final String _userName = 'John Doe'; // Sample data for demonstration
+  final String _userEmail =
+      'john.doe@example.com'; // Sample data for demonstration
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
@@ -25,11 +29,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'User Profile'),
+      appBar: const CustomAppBar(title: 'User Profile'),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/user_profile.png'), // Path to your image
+            image: AssetImage(
+                'assets/images/user_profile.png'), // Path to your image
             fit: BoxFit.cover,
           ),
         ),
@@ -37,23 +42,24 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           padding: const EdgeInsets.all(16.0),
           child: ListView(
             children: [
-              Center(
+              const Center(
                 child: CircleAvatar(
                   radius: 50,
-                  backgroundImage: NetworkImage('https://via.placeholder.com/100'), // Sample profile image
+                  backgroundImage: NetworkImage(
+                      'https://via.placeholder.com/100'), // Sample profile image
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               CustomTextField(
                 controller: _nameController,
                 hintText: 'Name',
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               CustomTextField(
                 controller: _emailController,
                 hintText: 'Email',
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               CustomElevatedButton(
                 onPressed: _updateProfile,
                 label: 'Update Profile',
@@ -66,12 +72,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   void _updateProfile() {
-    final updatedName = _nameController.text;
-    final updatedEmail = _emailController.text;
-
     // Provide feedback to the user
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Profile updated successfully!')),
+      const SnackBar(content: Text('Profile updated successfully!')),
     );
   }
 }

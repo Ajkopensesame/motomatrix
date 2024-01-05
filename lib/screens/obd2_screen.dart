@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:motomatrix/models/vin_data.dart';
+import 'package:motomatrix/widgets/custom_vehicle_app_bar.dart';
 import '../widgets/custom_app_bar.dart';
 import 'connected_vehicle_screen.dart';
 
-class OBD2Screen extends StatefulWidget {
+class OBD2Screen extends ConsumerStatefulWidget {
+  const OBD2Screen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _OBD2ScreenState createState() => _OBD2ScreenState();
 }
 
-class _OBD2ScreenState extends State<OBD2Screen> {
+class _OBD2ScreenState extends ConsumerState<OBD2Screen> {
   bool _isConnected = false; // To track Bluetooth connection status
   List<String> _obdData = []; // Sample data for demonstration
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'OBD2 Interaction'),
+      appBar: const CustomAppBar(title: 'OBD2 Interaction'),
       body: Stack(
         children: [
           _buildBackgroundImage(), // Background image
@@ -41,11 +47,14 @@ class _OBD2ScreenState extends State<OBD2Screen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _handleBluetoothConnection,
+        backgroundColor: Colors.white,
         child: Icon(
           _isConnected ? Icons.bluetooth_connected : Icons.bluetooth,
           color: Theme.of(context).primaryColor,
         ),
-        backgroundColor: Colors.white,
+      ),
+      bottomNavigationBar: CustomVehicleAppBar(
+        onVehicleSelected: (VinData selectedVehicle) {},
       ),
     );
   }
@@ -88,7 +97,7 @@ class _OBD2ScreenState extends State<OBD2Screen> {
       _connectOBD2();
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ConnectedVehicleScreen()),
+        MaterialPageRoute(builder: (context) => const ConnectedVehicleScreen()),
       );
     }
   }

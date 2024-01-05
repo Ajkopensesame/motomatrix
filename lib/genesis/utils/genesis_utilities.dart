@@ -31,7 +31,7 @@ class GenesisUtilities {
     if (str.length <= length) {
       return str;
     }
-    return str.substring(0, length) + '...';
+    return '${str.substring(0, length)}...';
   }
 
   /// Checks if a string contains any of the stop words.

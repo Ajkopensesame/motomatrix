@@ -1,18 +1,20 @@
-import 'package:firebase_auth/firebase_auth.dart';  // Import FirebaseAuth
+import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/vin_data.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late final String _userId;  // Declare _userId as a late final variable
+  late final String _userId; // Declare _userId as a late final variable
 
   FirestoreService() {
     // Initialize _userId with the current authenticated user's ID
     _userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
   }
 
-  CollectionReference get _userVehicles => _firestore.collection('users').doc(_userId).collection('vehicles');
-  CollectionReference get _problemsAndFixes => _firestore.collection('problems_and_fixes');
+  CollectionReference get _userVehicles =>
+      _firestore.collection('users').doc(_userId).collection('vehicles');
+  CollectionReference get _problemsAndFixes =>
+      _firestore.collection('problems_and_fixes');
 
   Future<void> saveVinData(VinData vinData) async {
     DocumentReference docRef = await _userVehicles.add(vinData.toMap());
@@ -27,18 +29,29 @@ class FirestoreService {
     QuerySnapshot snapshot = await _userVehicles.get();
     return snapshot.docs.map((doc) {
       var vinData = VinData.fromMap(doc.data() as Map<String, dynamic>);
-      vinData.documentId = doc.id;  // Populate documentId here
+      vinData.documentId = doc.id; // Populate documentId here
       return vinData;
     }).toList();
   }
 
-  Future<List<Map<String, dynamic>>> getPotentialFixes(String problemDescription) async {
-    QuerySnapshot snapshot = await _problemsAndFixes.where('problemDescription', isEqualTo: problemDescription).get();
-    return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+  Future<List<Map<String, dynamic>>> getPotentialFixes(
+      String problemDescription) async {
+    QuerySnapshot snapshot = await _problemsAndFixes
+        .where('problemDescription', isEqualTo: problemDescription)
+        .get();
+    return snapshot.docs
+        .map((doc) => doc.data() as Map<String, dynamic>)
+        .toList();
   }
 
-  Future<void> addOrUpdateProblem(String problemDescription, List<String> associatedVINs, List<Map<String, dynamic>> proposedFixes, List<String> tags) async {
-    final problemDoc = await _problemsAndFixes.where('problemDescription', isEqualTo: problemDescription).get();
+  Future<void> addOrUpdateProblem(
+      String problemDescription,
+      List<String> associatedVINs,
+      List<Map<String, dynamic>> proposedFixes,
+      List<String> tags) async {
+    final problemDoc = await _problemsAndFixes
+        .where('problemDescription', isEqualTo: problemDescription)
+        .get();
 
     if (problemDoc.docs.isEmpty) {
       await _problemsAndFixes.add({
@@ -65,9 +78,11 @@ class FirestoreService {
 
   Future<void> voteForFix(String problemId, String fixDescription) async {
     DocumentSnapshot problemDoc = await _problemsAndFixes.doc(problemId).get();
-    Map<String, dynamic>? problemData = problemDoc.data() as Map<String, dynamic>?;
+    Map<String, dynamic>? problemData =
+        problemDoc.data() as Map<String, dynamic>?;
     if (problemData != null && problemData['proposedFixes'] != null) {
-      List<Map<String, dynamic>> fixes = List.from(problemData['proposedFixes']);
+      List<Map<String, dynamic>> fixes =
+          List.from(problemData['proposedFixes']);
       for (var fix in fixes) {
         if (fix['description'] == fixDescription) {
           fix['votes'] = (fix['votes'] ?? 0) + 1;
@@ -86,14 +101,33 @@ class FirestoreService {
     });
   }
 
-  Future<List<Map<String, dynamic>>> getCommentsForProblem(String problemId) async {
-    QuerySnapshot snapshot = await _problemsAndFixes.doc(problemId).collection('comments').orderBy('createdAt', descending: true).get();
-    return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+  Future<List<Map<String, dynamic>>> getCommentsForProblem(
+      String problemId) async {
+    QuerySnapshot snapshot = await _problemsAndFixes
+        .doc(problemId)
+        .collection('comments')
+        .orderBy('createdAt', descending: true)
+        .get();
+    return snapshot.docs
+        .map((doc) => doc.data() as Map<String, dynamic>)
+        .toList();
   }
 
   Future<void> addTagToProblem(String problemId, String tag) async {
     await _problemsAndFixes.doc(problemId).update({
       'tags': FieldValue.arrayUnion([tag])
     });
+  }
+
+  Future<VinData?> getLastSavedVehicle() async {
+    QuerySnapshot snapshot = await _userVehicles
+        .orderBy('createdAt', descending: true)
+        .limit(1)
+        .get();
+    if (snapshot.docs.isNotEmpty) {
+      return VinData.fromMap(
+          snapshot.docs.first.data() as Map<String, dynamic>);
+    }
+    return null;
   }
 }
