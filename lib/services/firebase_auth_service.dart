@@ -37,6 +37,13 @@ class FirebaseAuthService {
     }
   }
 
+  Future<void> updateUserDisplayName(String name) async {
+    User? currentUser = _firebaseAuth.currentUser;
+    if (currentUser != null) {
+      await currentUser.updateDisplayName(name);
+    }
+  }
+
   // Method to sign up with email and password
   Future<AppUser?> signUpWithEmailAndPassword(
       String email, String password, String name) async {
@@ -64,4 +71,6 @@ class FirebaseAuthService {
   AppUser? getCurrentUser() {
     return _userFromFirebase(_firebaseAuth.currentUser);
   }
+
+  updateUserPassword(String newPassword) {}
 }

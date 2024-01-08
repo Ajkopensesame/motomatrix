@@ -12,17 +12,19 @@ class DtcChatGPTService {
     if (dtcCode.isEmpty) {
       throw Exception("Please enter a valid DTC code.");
     }
-
+    String vehicleDetails = selectedVehicle.toString();
     String userPrompt = """
-We are discussing a ${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model} with a Diagnostic Trouble Code (DTC): $dtcCode.
-- Vehicle Identifier : Provide the ${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}.
-- Code Identifier: Provide the unique alphanumeric code of the DTC.
-- Severity Level: Indicate the severity of the issue (e.g., minor, moderate, critical).
-- System or Component Affected: Describe which part of the vehicle is affected by this DTC (e.g., engine, transmission).
-- Description of the Issue: Offer a clear, concise explanation of the problem indicated by the DTC.
-- Possible Causes: List common causes for the DTC code $dtcCode, helping in preliminary diagnostics.
-- Recommended Actions: Suggest initial steps or actions the user can take to address the DTC. Please note that the user should not be referred to a dealer or mechanic. Avoid suggesting professional technicians or dealerships.
-- Refer user to Request OEM Information for more information.
+Scenario: A technician is diagnosing a $vehicleDetails that has triggered a Diagnostic Trouble Code (DTC): $dtcCode.
+
+1. **Issue Description and Severity**: For the $vehicleDetails, describe the issue related to DTC $dtcCode, including its potential impact on vehicle performance and safety.
+2. **Affected System/Component**: Identify the specific system or component likely affected by this DTC.
+3. **Step-by-Step Fix**: Provide a step-by-step guide for diagnosing and resolving this issue.
+4. **Common Mistakes**: Highlight any common mistakes or misdiagnoses typically associated with this DTC.
+5. **Safety Precautions**: Outline any safety precautions or critical checks to be considered while addressing this DTC.
+6. **Similar Cases**: Share insights on similar cases or related DTCs observed in the same make and model.
+7. **Preventive Measures**: Suggest preventive actions to avoid future occurrences of this DTC.
+
+Aim for a response that balances technical accuracy with clarity, suitable for a professional with basic to intermediate understanding of vehicle diagnostics.
 """;
 
     // Create a content item model with the user prompt

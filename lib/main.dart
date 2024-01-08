@@ -69,7 +69,7 @@ class MotoMatrixApp extends ConsumerWidget {
       home: const SplashScreen(),
       routes: {
         '/main': (context) => const MainScreen(),
-        '/login': (context) => LoginScreen(),
+        '/login': (context) => const LoginScreen(),
         '/dashboard': (context) => const DashboardScreen(),
         '/common_fix': (context) => const CommonFixScreen(),
         '/dtc_info': (context) => const DTCInfoScreen(),
@@ -107,7 +107,7 @@ class MainScreen extends ConsumerWidget {
           if (user != null) {
             return const DashboardScreen();
           } else {
-            return LoginScreen();
+            return const LoginScreen();
           }
         }
         return const CircularProgressIndicator();

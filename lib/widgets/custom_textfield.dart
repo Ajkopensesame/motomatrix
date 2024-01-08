@@ -1,7 +1,7 @@
 // lib/widgets/custom_textfield.dart
 
 import 'package:flutter/material.dart';
-import '../themes/app_theme.dart';  // <-- Import the AppTheme
+import '../themes/app_theme.dart'; // <-- Import the AppTheme
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
@@ -15,7 +15,8 @@ class CustomTextField extends StatelessWidget {
   final int? maxLines;
   final String? label;
 
-  const CustomTextField({super.key, 
+  const CustomTextField({
+    super.key,
     this.controller,
     this.labelText,
     this.validator,
@@ -26,7 +27,7 @@ class CustomTextField extends StatelessWidget {
     this.hintText,
     this.maxLines,
     this.label,
-
+    MaterialColor? borderColor,
   });
 
   @override
@@ -40,38 +41,39 @@ class CustomTextField extends StatelessWidget {
           color: Colors.black,
           fontWeight: FontWeight.bold,
         ),
-        hintStyle: const TextStyle(color: Colors.black), // This line sets the hintText color to black
+        hintStyle: const TextStyle(
+            color: Colors.black), // This line sets the hintText color to black
 
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),  // <-- Rounded corners
+          borderRadius: BorderRadius.circular(20.0), // <-- Rounded corners
           borderSide: const BorderSide(
             color: AppColors.darkBlue,
             width: 2.0,
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),  // <-- Rounded corners
+          borderRadius: BorderRadius.circular(20.0), // <-- Rounded corners
           borderSide: const BorderSide(
             color: AppColors.darkBlue,
             width: 2.0,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),  // <-- Rounded corners
+          borderRadius: BorderRadius.circular(20.0), // <-- Rounded corners
           borderSide: const BorderSide(
             color: AppColors.mustardYellow,
             width: 3.0,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),  // <-- Rounded corners
+          borderRadius: BorderRadius.circular(20.0), // <-- Rounded corners
           borderSide: const BorderSide(
             color: Colors.red,
             width: 2.0,
           ),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),  // <-- Rounded corners
+          borderRadius: BorderRadius.circular(20.0), // <-- Rounded corners
           borderSide: const BorderSide(
             color: Colors.red,
             width: 3.0,
@@ -79,7 +81,8 @@ class CustomTextField extends StatelessWidget {
         ),
         filled: true,
         fillColor: Colors.white.withOpacity(0.8),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       ),
       style: const TextStyle(
         fontSize: 18,

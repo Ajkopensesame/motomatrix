@@ -1,2 +1,4 @@
 implement a way to suggest parts based on the conversation
 then monetize on selling parts through api???
+
+affiliate

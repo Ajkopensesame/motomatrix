@@ -130,4 +130,6 @@ class FirestoreService {
     }
     return null;
   }
+
+  updateUserProfile(userId, String text, String text2) {}
 }

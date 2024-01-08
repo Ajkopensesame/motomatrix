@@ -5,18 +5,34 @@ class VINDecoderService {
   final String _baseUrl = 'https://vpic.nhtsa.dot.gov/api/vehicles';
 
   Future<Map<String, dynamic>> decodeVIN(String vin) async {
-    final response = await http.get(Uri.parse('$_baseUrl/DecodeVin/$vin?format=json'));
+    // First, try the standard DecodeVin endpoint
+    Uri standardUri = Uri.parse('$_baseUrl/DecodeVin/$vin?format=json');
+    http.Response response = await http.get(standardUri);
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> decodedData = json.decode(response.body);
       if (decodedData['Results'] != null && decodedData['Results'].isNotEmpty) {
         return _transformResults(vin, decodedData['Results']);
-      } else {
-        throw Exception('Failed to decode VIN');
       }
-    } else {
-      throw Exception('Failed to load data from NHTSA API');
     }
+
+    // If the standard decoder fails, try the Canadian VIN decoder
+    Uri canadianUri = Uri.parse(
+        '$_baseUrl/GetCanadianVehicleSpecifications/?format=json&vin=$vin');
+    response = await http.get(canadianUri);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> decodedData = json.decode(response.body);
+      if (decodedData['Results'] != null && decodedData['Results'].isNotEmpty) {
+        return _transformResults(
+            vin,
+            decodedData[
+                'Results']); // You may need a different transformation for Canadian data
+      }
+    }
+
+    throw Exception(
+        'Failed to decode VIN with both standard and Canadian decoders');
   }
 
   Map<String, dynamic> _transformResults(String vin, List<dynamic> results) {
@@ -39,14 +55,8 @@ class VINDecoderService {
         case 'Vehicle Type':
           transformedResults['vehicleType'] = value ?? 'N/A';
           break;
-        case 'Engine Model':
-          transformedResults['engineType'] = value ?? 'N/A';
-          break;
-        case 'Transmission Style':
-          transformedResults['transmission'] = value ?? 'N/A';
-          break;
-        case 'Drive Type':
-          transformedResults['drivetrain'] = value ?? 'N/A';
+        case 'Plant City':
+          transformedResults['plantCity'] = value ?? 'N/A';
           break;
         case 'Manufacturer Name':
           transformedResults['manufacturer'] = value ?? 'N/A';
@@ -54,50 +64,61 @@ class VINDecoderService {
         case 'Plant Country':
           transformedResults['countryOfOrigin'] = value ?? 'N/A';
           break;
-        case 'Fuel Type - Primary':
-          transformedResults['fuelType'] = value ?? 'N/A';
-          break;
-        case 'Plant City':
-          transformedResults['plantCity'] = value ?? 'N/A';
-          break;
         case 'Body Class':
           transformedResults['bodyClass'] = value ?? 'N/A';
           break;
-        case 'Number of Doors':
-          transformedResults['doors'] = value ?? 'N/A';
+        case 'Doors':
+          transformedResults['doors'] = value?.toString() ?? 'N/A';
           break;
-        case 'Engine Displacement (in liters)':
-          transformedResults['engineDisplacement'] = value ?? 'N/A';
+        case 'Displacement (L)':
+          transformedResults['engineDisplacement'] = value?.toString() ?? 'N/A';
           break;
-        case 'Gross Vehicle Weight Rating (GVWR)':
+        case 'Fuel Type - Primary':
+          transformedResults['fuelType'] = value ?? 'N/A';
+          break;
+        case 'Trim':
+          transformedResults['trimLevel'] = value ?? 'N/A';
+          break;
+        case 'Gross Vehicle Weight Rating From':
           transformedResults['gvwr'] = value ?? 'N/A';
           break;
-        case 'Curb Weight':
-          transformedResults['curbWeight'] = value ?? 'N/A';
+        case 'Engine Number of Cylinders':
+          transformedResults['engineCylinders'] = value?.toString() ?? 'N/A';
           break;
-        case 'Wheelbase':
-          transformedResults['wheelbase'] = value ?? 'N/A';
+        case 'Engine Power (kW)':
+          transformedResults['enginePowerKW'] = value?.toString() ?? 'N/A';
           break;
-        case 'Number of Seats':
-          transformedResults['numberOfSeats'] = value ?? 'N/A';
+        case 'Trim2':
+          transformedResults['trim2'] = value ?? 'N/A';
           break;
-        case 'Number of Airbags (Front, Side, and Knee)':
-          transformedResults['airbags'] = value ?? 'N/A';
+        case 'Displacement (CC)':
+          transformedResults['engineDisplacementCC'] =
+              value?.toString() ?? 'N/A';
           break;
-        case 'Anti-lock Braking System (ABS)':
-          transformedResults['abs'] = value ?? 'N/A';
+        case 'Displacement (CI)':
+          transformedResults['engineDisplacementCI'] =
+              value?.toString() ?? 'N/A';
           break;
-        case 'Electronic Stability Control (ESC)':
-          transformedResults['esc'] = value ?? 'N/A';
+        case 'Engine Brake (hp) From':
+          transformedResults['engineBrakeHP'] = value?.toString() ?? 'N/A';
+          break;
+        case 'Pretensioner':
+          transformedResults['pretensioner'] = value ?? 'N/A';
+          break;
+        case 'Seat Belt Type':
+          transformedResults['seatBeltType'] = value ?? 'N/A';
+          break;
+        case 'Other Restraint System Info':
+          transformedResults['otherRestraintSystemInfo'] = value ?? 'N/A';
+          break;
+        case 'Front Air Bag Locations':
+          transformedResults['frontAirBagLocations'] = value ?? 'N/A';
+          break;
+        case 'Side Air Bag Locations':
+          transformedResults['sideAirBagLocations'] = value ?? 'N/A';
           break;
         case 'Tire Pressure Monitoring System (TPMS) Type':
           transformedResults['tpmsType'] = value ?? 'N/A';
-          break;
-        case 'Trim Level':
-          transformedResults['trimLevel'] = value ?? 'N/A';
-          break;
-        case 'Transmission Type':
-          transformedResults['transmissionType'] = value ?? 'N/A';
           break;
       }
     }

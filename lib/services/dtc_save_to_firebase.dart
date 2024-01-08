@@ -7,14 +7,32 @@ class VehicleDataService {
     CollectionReference vehicleResponses =
         FirebaseFirestore.instance.collection('vehicle_responses');
 
-    await vehicleResponses.add({
-      'make': make,
-      'model': model,
-      'year': year,
-      'dtc': dtc,
-      'chatGPTResponse': chatGPTResponse,
-      'timestamp': FieldValue.serverTimestamp(),
-    });
+    var querySnapshot = await vehicleResponses
+        .where('make', isEqualTo: make)
+        .where('model', isEqualTo: model)
+        .where('year', isEqualTo: year)
+        .where('dtc', isEqualTo: dtc)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isEmpty) {
+      // If the document doesn't exist, create a new one with searchCount 1
+      await vehicleResponses.add({
+        'make': make,
+        'model': model,
+        'year': year,
+        'dtc': dtc,
+        'chatGPTResponse': chatGPTResponse,
+        'searchCount': 1, // New field for counting searches
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    } else {
+      // If the document exists, increment the searchCount
+      var doc = querySnapshot.docs.first;
+      await vehicleResponses.doc(doc.id).update({
+        'searchCount': FieldValue.increment(1),
+      });
+    }
   }
 
   // Method to check if a DTC response is already saved
