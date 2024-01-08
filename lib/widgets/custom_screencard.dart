@@ -6,7 +6,8 @@ class CustomScreenCard extends StatelessWidget {
   final String imagePath;
   final VoidCallback? onTap;
 
-  const CustomScreenCard({super.key, 
+  const CustomScreenCard({
+    super.key,
     required this.title,
     required this.description,
     this.imagePath = '',
@@ -15,8 +16,9 @@ class CustomScreenCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(  // <-- Wrap the Card with InkWell
-      onTap: onTap,  // <-- Use the onTap callback here
+    return InkWell(
+      // <-- Wrap the Card with InkWell
+      onTap: onTap, // <-- Use the onTap callback here
       child: Card(
         elevation: 3,
         margin: const EdgeInsets.all(10),
@@ -24,7 +26,7 @@ class CustomScreenCard extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            color: Colors.white.withOpacity(0.5),
+            color: Colors.white.withOpacity(0.9),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,20 +46,24 @@ class CustomScreenCard extends StatelessWidget {
                 ),
               Padding(
                 padding: const EdgeInsets.all(10),
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                child: Center(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-                child: Text(
-                  description,
-                  style: const TextStyle(
-                    fontSize: 16,
+                child: Center(
+                  child: Text(
+                    description,
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ),

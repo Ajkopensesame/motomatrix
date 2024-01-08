@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motomatrix/widgets/custom_background.dart';
-import '../themes/app_theme.dart';
+import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_textbutton.dart';
 import '../widgets/custom_textfield.dart';
 import '../services/firebase_auth_service.dart';
@@ -55,10 +55,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign Up'),
-        backgroundColor: AppTheme.lightTheme.primaryColor,
-      ),
+      appBar: const CustomAppBar(title: 'Sign Up'),
       body: CustomBackground(
         child: Padding(
           padding: const EdgeInsets.all(20.0),

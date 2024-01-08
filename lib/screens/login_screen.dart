@@ -1,28 +1,65 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:motomatrix/screens/signup_screen.dart';
-import '../main.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_elevatedbutton.dart';
 import '../widgets/custom_textbutton.dart';
 import '../widgets/custom_textfield.dart';
 import '../widgets/custom_background.dart';
+import '../themes/app_theme.dart'; // Ensure this import is correct for AppColors usage
+
+final firebaseAuthProvider =
+Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _LoginScreenState createState() => _LoginScreenState();
+  LoginScreenState createState() => LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isPasswordError = false; // New variable to track password error state
+  bool _isLoading = false;
+  String _errorMessage = '';
+
+  Future<void> _loginPressed() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = '';
+    });
+
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'Email and password cannot be empty.';
+      });
+      return;
+    }
+
+    try {
+      await ref.read(firebaseAuthProvider).signInWithEmailAndPassword(
+          email: email, password: password);
+      Navigator.pushReplacementNamed(context, '/dashboard');
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = e.message ?? 'An error occurred during login.';
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'An unexpected error occurred. Please try again later.';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,23 +82,44 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   controller: _passwordController,
                   labelText: 'Password',
                   obscureText: true,
-                  borderColor: _isPasswordError
-                      ? Colors.red
-                      : null, // Border color change
+                  borderColor: _errorMessage.isNotEmpty ? Colors.red : null,
                 ),
+                if (_errorMessage.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8, left: 10, right: 10, bottom: 5),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withAlpha(230), // Light background color with slight transparency
+                        borderRadius: BorderRadius.circular(8), // Rounded corners for the background
+                      ),
+                      child: Text(
+                        _errorMessage,
+                        textAlign: TextAlign.center, // Centers the text within the container
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 16, // Increased font size
+                          fontWeight: FontWeight.bold, // Bold font style
+                        ),
+                      ),
+                    ),
+                  ),
+
                 const SizedBox(height: 32),
-                CustomElevatedButton(
+                _isLoading
+                    ? const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.mustardYellow),
+                )
+                    : CustomElevatedButton(
                   label: 'Login',
-                  onPressed: () => _loginPressed(context),
+                  onPressed: _loginPressed,
                 ),
                 CustomTextButton(
-                  label: "Don't have an account? Sign up",
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => const SignUpScreen()),
-                    );
-                  },
+                  label: "Sign Up",
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                  ),
                 ),
               ],
             ),
@@ -71,37 +129,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  void _loginPressed(BuildContext context) async {
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
-
-    if (email.isEmpty && password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter email and password')),
-      );
-      return;
-    }
-
-    if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill out all fields')),
-      );
-      return;
-    }
-
-    try {
-      final user = await ref
-          .read(firebaseAuthProvider)
-          .signInWithEmailAndPassword(email, password);
-      if (user != null) {
-        Navigator.pushReplacementNamed(context, '/dashboard');
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'wrong-password') {
-        setState(() {
-          _isPasswordError = true; // Set password error state to true
-        });
-      }
-    }
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primaryColor">#193B52</color> <!-- Dark Blue -->
+    <color name="primaryDarkColor">#162C40</color> <!-- Darker Shade of Dark Blue -->
+    <color name="onPrimaryColor">#FFFFFF</color> <!-- White for text/icons on Primary Color -->
+    <color name="secondaryColor">#C9A765</color> <!-- Mustard Yellow -->
+    <color name="secondaryDarkColor">#A78D56</color> <!-- Darker Shade of Mustard Yellow -->
+    <color name="onSecondaryColor">#000000</color> <!-- Black for text/icons on Secondary Color -->
+    <!-- Add other colors as needed -->
+</resources>

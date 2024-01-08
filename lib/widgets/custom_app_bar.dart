@@ -21,26 +21,19 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(
         title,
         style: const TextStyle(
-          color: Colors
-              .white, // <-- Use the darkBlue color from AppTheme for the title
-          fontSize: 20, // <-- Increase font size for the title
-          fontWeight: FontWeight.w500, // <-- Make title text slightly bold
+          color: Colors.white, // Use the white color for the title
+          fontSize: 20, // Increase font size for the title
+          fontWeight: FontWeight.w500, // Make title text slightly bold
         ),
       ),
       actions: actions,
       centerTitle: centerTitle ?? true,
       bottom: bottom,
-      backgroundColor: AppColors
-          .darkBlue, // <-- Use the mustardYellow color from AppTheme for the background
-      elevation: 4.0, // <-- Add some elevation for a shadow effect
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(
-              10.0), // <-- Add a slight curve to the bottom of the AppBar
-        ),
-      ),
+      backgroundColor: AppColors.darkBlue, // Use the darkBlue color from AppTheme for the background
+      elevation: 4.0, // Add some elevation for a shadow effect
+      // Removed the shape property to eliminate the bottom curve
       iconTheme: const IconThemeData(
-        color: Colors.white, // <-- Set the color of the back arrow to white
+        color: Colors.white, // Set the color of the back arrow to white
       ),
     );
   }

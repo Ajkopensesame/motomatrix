@@ -10,7 +10,6 @@ import 'package:motomatrix/screens/obd2_screen.dart';
 import 'package:motomatrix/screens/oem_request_screen.dart';
 import 'package:motomatrix/screens/settings_screen.dart';
 import 'package:motomatrix/screens/signup_screen.dart';
-import 'package:motomatrix/screens/splash_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:motomatrix/screens/dashboard_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -21,6 +20,7 @@ import 'models/app_user.dart';
 import 'models/vin_data.dart';
 import 'services/firebase_auth_service.dart';
 import 'screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class StringUtil {
   static String toTitleCase(String text) {
@@ -44,12 +44,13 @@ class VinDataNotifier extends StateNotifier<VinData?> {
 }
 
 final vinDataProvider = StateNotifierProvider<VinDataNotifier, VinData?>(
-    (ref) => VinDataNotifier());
+        (ref) => VinDataNotifier());
 final vehicleProvider = ChangeNotifierProvider((ref) => VehicleProvider());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
   runApp(
     const ProviderScope(
       overrides: [],
@@ -63,13 +64,16 @@ class MotoMatrixApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final String initialRoute = auth.currentUser != null ? '/dashboard' : '/login';
+
     return MaterialApp(
       title: 'MotoMatrix',
       theme: AppTheme.lightTheme,
-      home: const SplashScreen(),
+      initialRoute: initialRoute,
       routes: {
         '/main': (context) => const MainScreen(),
-        '/login': (context) => LoginScreen(),
+        '/login': (context) => const LoginScreen(),
         '/dashboard': (context) => const DashboardScreen(),
         '/common_fix': (context) => const CommonFixScreen(),
         '/dtc_info': (context) => const DTCInfoScreen(),
@@ -79,17 +83,17 @@ class MotoMatrixApp extends ConsumerWidget {
         '/signup': (context) => const SignUpScreen(),
         '/user_profile': (context) => const UserProfileScreen(),
         '/vin_decoder': (context) => const VINDecoderScreen(),
-        '/connected_vehicle_screen': (context) =>
-            const ConnectedVehicleScreen(),
-        //'/genesis_main_screen': (context) => const GenesisMainScreen(),
+        '/connected_vehicle_screen': (context) => const ConnectedVehicleScreen(),
         '/my_garage_screen': (context) => const MyGarageScreen(),
         '/chat_screen': (context) => const ChatScreen(),
+        // Additional routes as needed
       },
       onGenerateRoute: _getRoute,
     );
   }
 
   Route<dynamic>? _getRoute(RouteSettings settings) {
+    // Route generation logic
     return null;
   }
 }
@@ -107,7 +111,7 @@ class MainScreen extends ConsumerWidget {
           if (user != null) {
             return const DashboardScreen();
           } else {
-            return LoginScreen();
+            return const LoginScreen();
           }
         }
         return const CircularProgressIndicator();
