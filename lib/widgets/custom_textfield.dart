@@ -1,7 +1,5 @@
-// lib/widgets/custom_textfield.dart
-
 import 'package:flutter/material.dart';
-import '../themes/app_theme.dart'; // <-- Import the AppTheme
+import '../themes/app_theme.dart'; // Ensure this path is correct for your AppTheme or AppColors
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
@@ -13,7 +11,9 @@ class CustomTextField extends StatelessWidget {
   final void Function(String)? onFieldSubmitted;
   final String? hintText;
   final int? maxLines;
-  final String? label;
+  final Color? borderColor; // Add borderColor parameter
+  final String? label; // Add label parameter, if you decide to use it
+  final Widget? suffixIcon; // Add suffixIcon parameter
 
   const CustomTextField({
     super.key,
@@ -26,8 +26,9 @@ class CustomTextField extends StatelessWidget {
     this.onFieldSubmitted,
     this.hintText,
     this.maxLines,
-    this.label,
-    MaterialColor? borderColor,
+    this.borderColor, // Initialize borderColor
+    this.label, // Initialize label
+    this.suffixIcon, // Initialize suffixIcon
   });
 
   @override
@@ -36,44 +37,43 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         hintText: hintText,
-        labelText: labelText,
+        labelText: labelText ?? label, // Use labelText or label
         labelStyle: const TextStyle(
           color: Colors.black,
           fontWeight: FontWeight.bold,
         ),
-        hintStyle: const TextStyle(
-            color: Colors.black), // This line sets the hintText color to black
-
+        hintStyle: const TextStyle(color: Colors.black),
+        suffixIcon: suffixIcon, // Use suffixIcon
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0), // <-- Rounded corners
-          borderSide: const BorderSide(
-            color: AppColors.darkBlue,
+          borderRadius: BorderRadius.circular(20.0),
+          borderSide: BorderSide(
+            color: borderColor ?? AppColors.darkBlue, // Use borderColor with fallback
             width: 2.0,
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0), // <-- Rounded corners
-          borderSide: const BorderSide(
-            color: AppColors.darkBlue,
+          borderRadius: BorderRadius.circular(20.0),
+          borderSide: BorderSide(
+            color: borderColor ?? AppColors.darkBlue, // Use borderColor with fallback
             width: 2.0,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0), // <-- Rounded corners
-          borderSide: const BorderSide(
-            color: AppColors.mustardYellow,
+          borderRadius: BorderRadius.circular(20.0),
+          borderSide: BorderSide(
+            color: borderColor ?? AppColors.mustardYellow, // Use borderColor with fallback
             width: 3.0,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0), // <-- Rounded corners
+          borderRadius: BorderRadius.circular(20.0),
           borderSide: const BorderSide(
             color: Colors.red,
             width: 2.0,
           ),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0), // <-- Rounded corners
+          borderRadius: BorderRadius.circular(20.0),
           borderSide: const BorderSide(
             color: Colors.red,
             width: 3.0,
@@ -81,16 +81,15 @@ class CustomTextField extends StatelessWidget {
         ),
         filled: true,
         fillColor: Colors.white.withOpacity(0.8),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       ),
       style: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w500,
       ),
-      cursorColor: AppColors.darkBlue,
+      cursorColor: borderColor ?? AppColors.darkBlue, // Use borderColor with fallback
       validator: validator,
-      obscureText: obscureText!,
+      obscureText: obscureText ?? false,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
       onFieldSubmitted: onFieldSubmitted,

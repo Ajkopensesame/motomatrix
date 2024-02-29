@@ -1,9 +1,8 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:motomatrix/services/dtc_save_to_firebase.dart';
 import '../models/vin_data.dart';
 import '../widgets/customVINcard.dart';
+import '../widgets/join_discussion_button.dart'; // Make sure to import your JoinDiscussionButton widget
 
 class VINDetailsScreen extends StatefulWidget {
   final VinData vinData;
@@ -11,10 +10,10 @@ class VINDetailsScreen extends StatefulWidget {
   const VINDetailsScreen({super.key, required this.vinData});
 
   @override
-  _VINDetailsScreenState createState() => _VINDetailsScreenState();
+  VINDetailsScreenState createState() => VINDetailsScreenState();
 }
 
-class _VINDetailsScreenState extends State<VINDetailsScreen> {
+class VINDetailsScreenState extends State<VINDetailsScreen> {
   List<Map<String, dynamic>> userSearchedDtcEntries = [];
   bool isLoading = true;
 
@@ -28,7 +27,7 @@ class _VINDetailsScreenState extends State<VINDetailsScreen> {
     try {
       var fetchedEntries = await VehicleDataService()
           .fetchUserSearchedDtcEntries(
-              widget.vinData.make, widget.vinData.model, widget.vinData.year);
+          widget.vinData.make, widget.vinData.model, widget.vinData.year);
       setState(() {
         userSearchedDtcEntries = fetchedEntries;
         isLoading = false;
@@ -70,13 +69,12 @@ class _VINDetailsScreenState extends State<VINDetailsScreen> {
                     ListTile(title: Text(entry['chatGPTResponse'])),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Placeholder action for the button
-                          // Here you can add the logic to navigate to the discussion page
-                          print('Join Discussion button pressed for DTC ${entry['dtc']}');
-                        },
-                        child: const Text('Join Discussion'),
+                      child: JoinDiscussionButton(
+                        dtcCode: entry['dtc'],
+                        make: entry['make'] ?? 'Unknown',  // Provide a fallback value
+                        model: entry['model'] ?? 'Unknown',  // Provide a fallback value
+                        year: entry['year']?.toString() ?? 'Unknown',  // Ensure year is a string and provide a fallback
+                        engineDisplacement: entry['engineDisplacement'] ?? 'Unknown',   // Provide a fallback value
                       ),
                     ),
                   ],

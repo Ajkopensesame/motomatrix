@@ -20,10 +20,7 @@ class JoinDiscussionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Access the app's theme
-    ThemeData theme = Theme.of(context);
-
-    return ElevatedButton.icon(
+    return ElevatedButton(
       onPressed: () {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -37,18 +34,9 @@ class JoinDiscussionButton extends StatelessWidget {
           ),
         );
       },
-      icon: const Icon(Icons.radio_button_checked),  // Substitute icon for bullseye
-      label: const Text('Post And Find Fix'),  // Button text
-      style: ElevatedButton.styleFrom(
-        foregroundColor: theme.colorScheme.onPrimary, backgroundColor: theme.primaryColor, // Use the onPrimary color for text and icon
-        textStyle: const TextStyle(
-          fontSize: 18, // Make text larger
-          fontWeight: FontWeight.bold,
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
+      child: const Text(
+        'Join Discussion',
+        style: TextStyle(color: Colors.black), // Set text color to black
       ),
     );
   }

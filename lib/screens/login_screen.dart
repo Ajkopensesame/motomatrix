@@ -47,6 +47,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
     try {
       await ref.read(firebaseAuthProvider).signInWithEmailAndPassword(
           email: email, password: password);
+      if (!mounted) return;
       Navigator.pushReplacementNamed(context, '/dashboard');
     } on FirebaseAuthException catch (e) {
       setState(() {
@@ -64,7 +65,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(title: 'Login'),
+      appBar: const CustomAppBar(),
       body: CustomBackground(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

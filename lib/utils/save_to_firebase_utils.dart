@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fbAuth;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as chatTypes;
-import '../main.dart';
+import '../providers/vin_data_provider.dart';
 
 Future<void> saveConversationToFirestore(
     WidgetRef ref, List<chatTypes.TextMessage> messages) async {

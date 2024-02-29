@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class VehicleDisplayWidget extends StatelessWidget {
   final String? make;
@@ -22,7 +23,8 @@ class VehicleDisplayWidget extends StatelessWidget {
         children: [
           Image.asset(
             logoAssetPath,
-            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+            errorBuilder: (BuildContext context, Object exception,
+                StackTrace? stackTrace) {
               // If the logo isn't found, display a placeholder or an error widget
               return const Icon(Icons.error, size: 50, color: Colors.red);
             },
@@ -38,6 +40,14 @@ class VehicleDisplayWidget extends StatelessWidget {
             const SizedBox(height: 5),
             Text(year!, style: const TextStyle(fontSize: 16)),
           ],
+          IconButton(
+            icon: const Icon(Symbols.barcode_scanner,
+                color: Colors.blue,
+                size: 30), // Adjust the icon's color and size as needed
+            onPressed: () {
+              Navigator.of(context).pushNamed('/vin_decoder');
+            },
+          ),
         ],
       ),
     );

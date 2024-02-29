@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/vin_data.dart';
-import '../screens/vin_details_screen.dart'; // Ensure you have this screen as suggested earlier
+import '../screens/vin_details_screen.dart'; // Ensure this is the correct path to your VIN details screen
 
 class VinSummaryCard extends StatelessWidget {
   final VinData vinData;
@@ -9,7 +9,17 @@ class VinSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String makeTitleCase = vinData.make![0].toUpperCase() + vinData.make!.substring(1).toLowerCase();
+    // Function to convert the first letter of each word to uppercase
+    String toTitleCase(String text) {
+      return text.split(' ').map((word) {
+        if (word.isNotEmpty) {
+          return word[0].toUpperCase() + word.substring(1).toLowerCase();
+        }
+        return '';
+      }).join(' ');
+    }
+
+    String makeTitleCase = toTitleCase(vinData.make ?? ''); // Apply title case to the whole make string
 
     return GestureDetector(
       onTap: () {
@@ -23,11 +33,11 @@ class VinSummaryCard extends StatelessWidget {
       child: Card(
         color: Colors.white.withOpacity(0.8),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),  // This adds a radius of 15.0 to the card
+          borderRadius: BorderRadius.circular(15.0), // Adds a radius of 15.0 to the card
         ),
         child: ListTile(
           title: Text(
-            '$makeTitleCase ${vinData.model} ${vinData.year}',
+            '${vinData.year} $makeTitleCase ${vinData.model} - ${vinData.engineDisplacement}L', // Updated order and included engine displacement
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.black,
