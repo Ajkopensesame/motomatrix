@@ -145,7 +145,7 @@ class _DTCInfoScreenState extends ConsumerState<DTCInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(title: 'DTC Information'),
+      appBar: const CustomAppBar(),
       body: Stack(
         children: [
           const BackgroundImageWidget(),

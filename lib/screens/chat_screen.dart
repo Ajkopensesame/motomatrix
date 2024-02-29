@@ -45,14 +45,9 @@ class _ChatScreenBuilder {
     List<chatTypes.TextMessage> reversedMessages = messages.reversed.toList();
 
     return Scaffold(
-      appBar: CustomAppBar(
-        title: ('Genesis Chat'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => startNewConversation(),
-          ),
-        ],
+      appBar: const CustomAppBar(
+
+
       ),
       body: Stack(
         children: [

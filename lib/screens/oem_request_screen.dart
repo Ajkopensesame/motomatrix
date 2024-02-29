@@ -23,7 +23,7 @@ class _OEMRequestScreenState extends ConsumerState<OEMRequestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(title: 'OEM Information Request'),
+      appBar: const CustomAppBar(),
       body: Stack(
         children: [
           _buildBackgroundImage(), // Background image

@@ -29,7 +29,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(
-        title: 'VINpedia',
+
       ),
       body: CustomBackground(
         child: ListView(
@@ -150,20 +150,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ),
               ),
             ),
-            //CustomScreenCard(
-            // title: 'Common Fixes',
-            // description: 'View and explore common fixes for various DTCs.',
-            //imagePath: 'assets/images/common_fix.png',
-            //onTap: () => Navigator.pushNamed(
-            //   context, '/common_fix'), // Use named route
-            //),
+            CustomScreenCard(
+             title: 'Common Fixes',
+             description: 'View and explore common fixes for various DTCs.',
+            imagePath: 'assets/images/common_fix.png',
+            onTap: () => Navigator.pushNamed(
+               context, '/common_fix'), // Use named route
+            ),
             //CustomScreenCard(
             //  title: 'Request OEM Information',
-            // description: 'Request information directly from OEMs.',
-            // imagePath: 'assets/images/oem_request.png',
+             //description: 'Request information directly from OEMs.',
+             //imagePath: 'assets/images/oem_request.png',
             //onTap: () => Navigator.pushNamed(
             //  context, '/oem_request'), // Use named route
-            //),
+           // ),
             CustomScreenCard(
               title: 'User Profile',
               description: 'View and Edit Your Profile Details.',

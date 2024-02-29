@@ -6,7 +6,6 @@ import 'package:random_avatar/random_avatar.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_elevatedbutton.dart';
 import '../widgets/custom_textfield.dart';
-import '../services/firestore_service.dart';
 import 'package:motomatrix/providers/firebase_auth_service_provider.dart';
 
 class UserProfileScreen extends ConsumerWidget {
@@ -18,22 +17,14 @@ class UserProfileScreen extends ConsumerWidget {
     final user = firebaseAuthService.getCurrentUser();
 
     final TextEditingController nameController =
-        TextEditingController(text: user?.name ?? '');
+    TextEditingController(text: user?.name ?? '');
     final TextEditingController emailController =
-        TextEditingController(text: user?.email ?? '');
+    TextEditingController(text: user?.email ?? '');
     final TextEditingController passwordController = TextEditingController();
 
     void updateProfile() async {
-      final firestoreService = FirestoreService();
-
       try {
         await firebaseAuthService.updateUserDisplayName(nameController.text);
-        final userId = firebaseAuthService.getCurrentUser()?.id ?? 'anonymous';
-        await firestoreService.updateUserProfile(
-          userId,
-          nameController.text,
-          emailController.text,
-        );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profile updated successfully!')),
         );
@@ -46,8 +37,7 @@ class UserProfileScreen extends ConsumerWidget {
 
     void signOut() async {
       await firebaseAuthService.signOut();
-      Navigator.pushReplacementNamed(context,
-          '/login'); // Replace with the route name of your login screen
+      Navigator.pushReplacementNamed(context, '/login'); // Replace with the route name of your login screen
     }
 
     void changePassword() async {
@@ -67,7 +57,7 @@ class UserProfileScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: const CustomAppBar(title: 'User Profile'),
+      appBar: const CustomAppBar(),
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
@@ -82,11 +72,10 @@ class UserProfileScreen extends ConsumerWidget {
               Center(
                 child: user?.photoUrl != null
                     ? CircleAvatar(
-                        radius: 50,
-                        backgroundImage: NetworkImage(user!.photoUrl!),
-                      )
-                    : RandomAvatar(user?.id ?? 'default',
-                        height: 100, width: 100),
+                  radius: 50,
+                  backgroundImage: NetworkImage(user!.photoUrl!),
+                )
+                    : RandomAvatar(user?.id ?? 'default', height: 100, width: 100),
               ),
               const SizedBox(height: 20),
               CustomTextField(

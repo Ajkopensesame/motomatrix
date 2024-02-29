@@ -1,27 +1,24 @@
-// ignore_for_file: use_build_context_synchronously
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:motomatrix/main.dart';
-import 'package:motomatrix/widgets/custom_vehicle_app_bar.dart';
-import '../models/vin_data.dart';
-import '../services/vin_decoder_service.dart';
-import '../services/firestore_service.dart';
-import '../widgets/custom_app_bar.dart';
+import 'package:motomatrix/models/vin_data.dart';
+import 'package:motomatrix/screens/vin_details_screen.dart';
+import 'package:motomatrix/services/vin_decoder_service.dart';
+import 'package:motomatrix/services/firestore_service.dart';
+import 'package:motomatrix/widgets/custom_app_bar.dart';
+import 'package:motomatrix/widgets/vin_summary_card.dart';
 import '../widgets/custom_elevatedbutton.dart';
 import '../widgets/custom_textfield.dart';
-import '../widgets/vin_summary_card.dart';
-import '../screens/vin_details_screen.dart';
+import 'barcode_scanner_screen.dart';
 
 class VINDecoderScreen extends ConsumerStatefulWidget {
   const VINDecoderScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _VINDecoderScreenState createState() => _VINDecoderScreenState();
+  VINDecoderScreenState createState() => VINDecoderScreenState();
 }
 
-class _VINDecoderScreenState extends ConsumerState<VINDecoderScreen> {
+class VINDecoderScreenState extends ConsumerState<VINDecoderScreen> {
   final VINDecoderService _vinDecoderService = VINDecoderService();
   final FirestoreService _firestoreService = FirestoreService();
   final TextEditingController _vinController = TextEditingController();
@@ -30,147 +27,176 @@ class _VINDecoderScreenState extends ConsumerState<VINDecoderScreen> {
   @override
   void initState() {
     super.initState();
+    if (kDebugMode) {
+      print("VINDecoderScreen initState");
+    }
     _fetchSavedVINs();
   }
 
   void _fetchSavedVINs() async {
-    List savedVINs = await _firestoreService.getSavedVINs();
+    if (kDebugMode) {
+      print("VINDecoderScreen _fetchSavedVINs");
+    }
+    List<VinData> savedVINs = await _firestoreService.getSavedVINs();
     setState(() {
       _vinDataList.clear();
-      _vinDataList.addAll(savedVINs as Iterable<VinData>);
+      _vinDataList.addAll(savedVINs);
     });
   }
 
-  void _decodeVIN(BuildContext context) async {
-    String enteredVin = _vinController.text;
+  void _decodeVIN(String vin) async {
+    if (kDebugMode) {
+      print("VINDecoderScreen _decodeVIN");
+    }
 
-    // Check if the entered VIN is already in the list
-    bool vinAlreadyAdded = _vinDataList.any((vinData) => vinData.id == enteredVin);
+    final scaffoldMessenger = ScaffoldMessenger.of(context); // Local reference to ScaffoldMessenger
+
+    // Check if the widget is still mounted before proceeding.
+    if (!mounted) return;
+
+    bool vinAlreadyAdded = _vinDataList.any((vinData) => vinData.id == vin);
 
     if (vinAlreadyAdded) {
-      // Show a snackbar if the VIN is already added
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('VIN already added')),
-      );
+      scaffoldMessenger.showSnackBar(const SnackBar(content: Text('VIN already added')));
     } else {
-      // Existing logic to decode and save VIN
       try {
-        final data = await _vinDecoderService.decodeVIN(enteredVin);
+        final data = await _vinDecoderService.decodeVIN(vin);
         VinData vinData = VinData.fromMap(data);
 
         try {
           await _firestoreService.saveVinData(vinData);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('VIN decoded and saved successfully!')),
+
+          // Check again because the above await could have taken some time.
+          if (!mounted) return;
+
+          scaffoldMessenger.showSnackBar(const SnackBar(content: Text('VIN decoded and saved successfully!')));
+
+          setState(() {
+            _vinDataList.add(vinData);
+          });
+
+          // Local reference to Navigator
+          final navigator = Navigator.of(context);
+
+          // Navigate to VINDetailsScreen with the decoded VinData
+          navigator.push(
+            MaterialPageRoute(
+              builder: (context) => VINDetailsScreen(vinData: vinData),
+            ),
           );
+
         } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error saving decoded VIN: $e')),
-          );
+          if (!mounted) return;
+          scaffoldMessenger.showSnackBar(SnackBar(content: Text('Error saving decoded VIN: $e')));
         }
-
-        ref.read(vehicleProvider.notifier).setSelectedVehicle(vinData);
-
-        setState(() {
-          _vinDataList.add(vinData);
-        });
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error decoding VIN: $e')),
-        );
+        if (!mounted) return;
+        scaffoldMessenger.showSnackBar(SnackBar(content: Text('Error decoding VIN: $e')));
       }
     }
   }
-
 
   Future<void> _deleteVinData(VinData vinData) async {
+    if (kDebugMode) {
+      print("VINDecoderScreen _deleteVinData");
+    }
     if (vinData.documentId != null) {
+      // Capture the ScaffoldMessenger before the async gap
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
+
       try {
         await _firestoreService.deleteVinData(vinData.documentId!);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('VIN deleted successfully!')),
-        );
+        scaffoldMessenger.showSnackBar(const SnackBar(content: Text('VIN deleted successfully!')));
 
         setState(() {
-          _vinDataList.remove(vinData);
+          _vinDataList.removeWhere((data) => data.documentId == vinData.documentId);
         });
       } catch (error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error deleting VIN: $error')),
-        );
+        // Use the captured ScaffoldMessenger to show the snack bar
+        scaffoldMessenger.showSnackBar(SnackBar(content: Text('Error deleting VIN: $error')));
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      print("VINDecoderScreen build");
+    }
     return Scaffold(
-      appBar: const CustomAppBar(title: 'VIN Decoder'),
+      appBar: const CustomAppBar(),
       body: Container(
+        padding: const EdgeInsets.all(16.0),
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/vin_decoder.png'),
             fit: BoxFit.cover,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomTextField(
-                controller: _vinController,
-                label: 'Enter VIN',
-                hintText: 'Enter VIN',
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomTextField(
+              controller: _vinController,
+              labelText: 'Enter VIN',
+              hintText: 'Enter VIN here',
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.camera_alt),
+                onPressed: () async {
+                  if (kDebugMode) {
+                    print("VINDecoderScreen SuffixIcon onPressed");
+                  }
+                  final scannedVin = await Navigator.push<String>(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const BarcodeScannerScreen(),
+                    ),
+                  );
+
+                  if (scannedVin != null && mounted) {
+                    setState(() {
+                      _vinController.text = scannedVin;
+                    });
+                  }
+                },
               ),
-              const SizedBox(height: 20),
-              Center(
-                child: CustomElevatedButton(
-                  label: 'Decode VIN',
-                  onPressed: () => _decodeVIN(context),
-                ),
+            ),
+            const SizedBox(height: 20),
+            Center(
+              child: CustomElevatedButton(
+                label: 'Decode VIN',
+                onPressed: () {
+                  if (kDebugMode) {
+                    print("VINDecoderScreen Decode VIN onPressed");
+                  }
+                  _decodeVIN(_vinController.text);
+                },
               ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _vinDataList.length,
-                  itemBuilder: (context, index) {
-                    final vinData = _vinDataList[index];
-                    return Dismissible(
-                      key: ValueKey(vinData.id),
-                      direction: DismissDirection.endToStart,
-                      background: Container(
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.only(right: 20.0),
-                        color: Colors.red,
-                        child: const Icon(Icons.delete, color: Colors.white),
-                      ),
-                      onDismissed: (direction) {
-                        // Handle deletion synchronously
-                        _deleteVinData(vinData);
-                      },
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  VINDetailsScreen(vinData: vinData),
-                            ),
-                          );
-                        },
-                        child: VinSummaryCard(vinData: vinData),
-                      ),
-                    );
-                  },
-                ),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _vinDataList.length,
+                itemBuilder: (context, index) {
+                  final vinData = _vinDataList[index];
+                  return Dismissible(
+                    key: ValueKey(vinData.id),
+                    direction: DismissDirection.endToStart,
+                    onDismissed: (_) {
+                      if (kDebugMode) {
+                        print("VINDecoderScreen Dismissible onDismissed");
+                      }
+                      _deleteVinData(vinData);
+                    },
+                    background: Container(color: Colors.red, alignment: Alignment.centerRight, child: const Icon(Icons.delete, color: Colors.white)),
+                    child: VinSummaryCard(vinData: vinData),
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ),
-      bottomNavigationBar: CustomVehicleAppBar(
-        onVehicleSelected: (VinData selectedVehicle) {},
       ),
     );
   }

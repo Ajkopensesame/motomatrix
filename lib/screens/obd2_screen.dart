@@ -20,7 +20,7 @@ class _OBD2ScreenState extends ConsumerState<OBD2Screen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(title: 'OBD2 Interaction'),
+      appBar: const CustomAppBar(),
       body: Stack(
         children: [
           _buildBackgroundImage(), // Background image
